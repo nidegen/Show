@@ -25,17 +25,3 @@ public protocol ImageServer {
   
   func deleteImage(withId id: Id)
 }
-
-public enum ServerProvider {
-  static var _server: ImageServer?
-  
-  public static var server: ImageServer {
-    get {
-      return _server!
-    }
-    
-    set {
-      _server = newValue
-    }
-  }
-}

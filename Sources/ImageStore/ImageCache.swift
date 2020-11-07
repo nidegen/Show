@@ -40,7 +40,7 @@ public class ImageCache {
     guard var url = self.fileManager.cachedImageUrl(forId: id, withSize: size) else { return }
     url.appendPathExtension("jpg")
     do {
-      try FileManager.default.createDirectory(atPath: url.deletingLastPathComponent().path, withIntermediateDirectories: true, attributes: nil)
+      try fileManager.createDirectory(atPath: url.deletingLastPathComponent().path, withIntermediateDirectories: true, attributes: nil)
       try image.jpegData(compressionQuality: 1)?.write(to: url)
     } catch {
       print(error.localizedDescription)
