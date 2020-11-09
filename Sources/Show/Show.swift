@@ -1,3 +1,3 @@
-import ImageStore
-import VideoStore
+import ShowVideo
+import ShowImage
 import Tools
