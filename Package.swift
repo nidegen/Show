@@ -21,12 +21,12 @@ let package = Package(
   targets: [
     .target(
       name: "Show",
-      dependencies: ["ImageStore", "VideoStore", "Tools"]),
+      dependencies: ["ShowImage", "ShowVideo", "Tools"]),
     .target(
-      name: "ImageStore",
+      name: "ShowImage",
       dependencies: []),
     .target(
-      name: "VideoStore",
+      name: "ShowVideo",
       dependencies: []),
     .target(
       name: "Tools",
