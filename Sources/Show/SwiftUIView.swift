@@ -5,7 +5,7 @@ struct SwiftUIView: View {
   var body: some View {
     VStack {
       Spacer()
-      VideoView(.testVideo)
+      VideoView(loader: .tester)
       Spacer()
     }
   }

@@ -1,13 +1,19 @@
 import Foundation
 
-class VideoLoader: ObservableObject {
+public class VideoLoader: ObservableObject {
   @Published var video: Video?
   var id: Id = ""
   
-  init(videoServer: VideoStore) {
-    videoServer.video(forId: id) { video in
+  public init(store: VideoStore) {
+    store.video(forId: id) { video in
       self.video = video
     }
   }
   
+  private init(video: Video) {
+    self.video = video
+    id = video.id
+  }
+  
+  public static var tester: VideoLoader { VideoLoader(video: .testVideo) }
 }
