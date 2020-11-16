@@ -27,7 +27,6 @@ public final class VideoStore {
     }
   }
   
-  @discardableResult
   public func uploadNewVideo(_ video: Video,
                              completion: ((Id?)->())?) {
     server.uploadVideo(videoURL: video.localURL, id: video.id, completion: completion)

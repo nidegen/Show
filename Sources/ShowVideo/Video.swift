@@ -14,6 +14,7 @@ public class Video {
     self.localURL = localURL
   }
 }
+
 extension Video {
   func requestAuthorization(completion: @escaping ()->Void) {
     if PHPhotoLibrary.authorizationStatus() == .notDetermined {
@@ -43,5 +44,11 @@ extension Video {
         }
       }
     }
+  }
+}
+
+public extension Video {
+  static var testVideo: Video {
+    return Video(id: "testVideo", localURL: URL(fileURLWithPath: "test"))
   }
 }
