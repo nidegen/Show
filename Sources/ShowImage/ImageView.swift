@@ -13,7 +13,7 @@ public struct ImageView: View {
   
   public var placeholder: AnyView?
 
-  public init(id: Id?, store: ImageStore) {
+  public init(id: Id?, store: ImageStore = ImageStore.shared) {
     imageLoader = ImageLoader(store: store)
     id.map {
       imageLoader.load(id: $0)
@@ -60,13 +60,4 @@ struct EchoImageView_Previews: PreviewProvider {
   static var previews: some View {
     ImageView(id: "nbl", store: ImageStore(server: MockServer()))
   }
-}
-
-
-class MockServer: ImageServer {
-  func uploadNewImage(fromURL photoURL: URL, id: Id, completion: ((Id?) -> ())?) -> Id { "" }
-  
-  func image(forId id: Id, type: ImageSizeClass, completion: @escaping (UIImage?) -> ()) {}
-  func uploadNewImage(_ photo: UIImage, id: Id, maxResolution: CGFloat?, compression: CGFloat, completion: ((Id?) -> ())?) -> Id { "mock" }
-  func deleteImage(withId id: Id) {}
 }

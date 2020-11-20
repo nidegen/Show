@@ -16,6 +16,8 @@ public final class ImageStore {
   public init(server: ImageServer) {
     self.server = server
   }
+  
+  public static var shared = ImageStore(server: MockServer())
     
   public func image(forId id: Id, type: ImageSizeClass = .original, completion: @escaping (UIImage?)->()) {
     if let cachedImage = cache.getImage(forId: id) {
