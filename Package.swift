@@ -13,7 +13,7 @@ let package = Package(
   products: [
     .library(
       name: "Show",
-      targets: ["ShowImage", "ShowVideo", "Tools"]),
+      targets: ["Show", "ShowImage", "ShowVideo", "Tools"]),
   ],
   dependencies: [
     // .package(url: /* package url */, from: "1.0.0"),

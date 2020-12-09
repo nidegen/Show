@@ -19,7 +19,7 @@ class MockServer: ImageServer {
   }
   
   func image(forId id: Id, type: ImageSizeClass, completion: @escaping (UIImage?) -> ()) {
-    let image = try? UIImage(data: Data(contentsOf: URL(string: "https://source.unsplash.com/random/800x600")!))
+    let image = try? UIImage(data: Data(contentsOf: URL(string: "https://source.unsplash.com/random/\(id)")!))
     completion(image)
   }
   func deleteImage(withId id: Id) {}
