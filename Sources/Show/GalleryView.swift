@@ -1,27 +1,41 @@
 import SwiftUI
 import ShowImage
 
-struct GalleryView<Image: ImageDescription>: View {
+public struct GalleryView<Image: ImageDescription>: View {
+  public init(images: [Image], currentImage: Binding<Image>, store: ImageStore) {
+    self.images = images
+    self.store = store
+    self._currentImage = currentImage
+  }
+  
   var images: [Image]
+  var store: ImageStore
   
   @Binding var currentImage: Image
   
-  var body: some View {
+  
+  public var body: some View {
     TabView(selection: $currentImage) {
       ForEach(images) { image in
         ZStack {
-          Color.black
-          ImageView(id: image.imageId)
+          Color.blue
+          Text(image.imageId)
+          ZoomableImageView(id: image.imageId, store: store)
+//          ImageView(id: image.imageId, store: store)
         }
+        .padding()
       }
     }
-    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
   }
 }
 
 struct GalleryView_Previews: PreviewProvider {
-  @State static var state = "b"
+  @State static var image = "a1"
   static var previews: some View {
-    GalleryView(images: ["a1", "b1", "c1"], currentImage: $state)
+    VStack {
+      GalleryView(images: ["a1", "b1", "c1"], currentImage: $image, store: .mock)
+      Text(image)
+    }
   }
 }

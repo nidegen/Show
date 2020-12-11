@@ -13,27 +13,24 @@ public struct ImageView: View {
   
   public var placeholder: AnyView?
 
-  public init(id: Id?, store: ImageStore = ImageStore.shared) {
+  public init(id: Id?, store: ImageStore) {
     imageLoader = ImageLoader(store: store)
     id.map {
       imageLoader.load(id: $0)
     }
   }
   
+  @ViewBuilder
   public var body: some View {
-    Group {
-      if imageLoader.downloadedImage != nil {
-        Image(uiImage: imageLoader.downloadedImage!.withRenderingMode(.alwaysOriginal))
-          .resizable()
-          .aspectRatio(contentMode: .fill)
+    if imageLoader.downloadedImage != nil {
+      Image(uiImage: imageLoader.downloadedImage!.withRenderingMode(.alwaysOriginal))
+        .resizable()
+        .aspectRatio(contentMode: .fill)
+    } else {
+      if let placeholder = placeholder {
+        placeholder
       } else {
-        Group {
-          if let placeholder = placeholder {
-            placeholder
-          } else {
-            defaultPlaceholder
-          }
-        }
+        defaultPlaceholder
       }
     }
   }

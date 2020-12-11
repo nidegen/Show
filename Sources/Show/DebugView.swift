@@ -1,5 +1,6 @@
 import SwiftUI
 import ShowVideo
+import ShowImage
 
 // This is a debug View as SwiftUI Previews only work in a target of the same name as the package
 struct DebugView: View {
@@ -7,6 +8,9 @@ struct DebugView: View {
     VStack {
       Spacer()
       VideoView(loader: .tester)
+      Spacer()
+      ImageView(id: "test", store: .mock)
+        .padding()
       Spacer()
     }
   }

@@ -3,6 +3,7 @@ import ShowImage
 
 struct WidgetView<Image: ImageDescription>: View {
   var images: [Image]
+  var store: ImageStore
   var indexDisplayMode: PageTabViewStyle.IndexDisplayMode = .automatic
   
   @Binding var currentImage: Image
@@ -12,7 +13,7 @@ struct WidgetView<Image: ImageDescription>: View {
       ForEach(images) { image in
         ZStack {
           Color.black
-          ImageView(id: image.imageId)
+          ImageView(id: image.imageId, store: store)
             .frame(width: UIScreen.main.bounds.width, height: 200)
         }
         .clipShape(RoundedRectangle(cornerRadius: 10.0, style: .continuous))
@@ -25,13 +26,19 @@ struct WidgetView<Image: ImageDescription>: View {
   }
 }
 
-struct WidgetView_Previews: PreviewProvider {
-  @State static var state = "B"
+struct DemoWidhet: View {
+  @State var state = "B"
   
-  static var previews: some View {
+  var body: some View {
     VStack {
       Text(state)
-      WidgetView(images: ["A", "B", "C", "D", "E"], currentImage: $state)
+      WidgetView(images: ["A", "B", "C", "D", "E"], store: .mock, currentImage: $state)
     }
+  }
+}
+
+struct WidgetView_Previews: PreviewProvider {
+  static var previews: some View {
+    DemoWidhet()
   }
 }
