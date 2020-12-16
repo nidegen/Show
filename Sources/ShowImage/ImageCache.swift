@@ -12,6 +12,18 @@ import UIKit
 public class ImageCache {
   public init() {}
   
+  public func deleteCache() {
+    guard let cacheURL = fileManager.baseImageCacheUrl else { return }
+    try? fileManager.removeItem(atPath: cacheURL.path)
+  }
+  
+  public func deleteCache(of ids: [String]) {
+    for id in ids {
+      guard let cacheURL = fileManager.cachedImageDirUrl(forId: id) else { continue }
+      try? fileManager.removeItem(atPath: cacheURL.path)
+    }
+  }
+  
   private let fileManager = FileManager.default
   let cache = NSCache<NSString, UIImage>()
   

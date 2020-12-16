@@ -1,11 +1,3 @@
-//
-//  ImageView.swift
-//  Echo
-//
-//  Created by Nicolas Degen on 18.09.20.
-//  Copyright © 2020 Echo Labs AG. All rights reserved.
-//
-
 import SwiftUI
 
 public struct ImageView: View {
@@ -13,8 +5,8 @@ public struct ImageView: View {
   
   public var placeholder: AnyView?
 
-  public init(id: Id?, store: ImageStore) {
-    imageLoader = ImageLoader(store: store)
+  public init(id: Id?, sizeClass: ImageSizeClass = .original, store: ImageStore) {
+    imageLoader = ImageLoader(store: store, sizeClass: sizeClass)
     id.map {
       imageLoader.load(id: $0)
     }
@@ -53,7 +45,7 @@ public struct ImageView: View {
   }
 }
 
-struct EchoImageView_Previews: PreviewProvider {
+struct ImageView_Previews: PreviewProvider {
   static var previews: some View {
     ImageView(id: "nbl", store: ImageStore(server: MockServer()))
   }

@@ -18,10 +18,8 @@ public struct GalleryView<Image: ImageDescription>: View {
     TabView(selection: $currentImage) {
       ForEach(images) { image in
         ZStack {
-          Color.blue
-          Text(image.imageId)
-          ZoomableImageView(id: image.imageId, store: store)
-//          ImageView(id: image.imageId, store: store)
+          Color.black
+          ImageView(id: image.imageId, store: ImageStore.mock)
         }
         .padding()
       }

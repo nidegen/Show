@@ -13,7 +13,7 @@ struct WidgetView<Image: ImageDescription>: View {
       ForEach(images) { image in
         ZStack {
           Color.black
-          ImageView(id: image.imageId, store: store)
+          ImageView(id: image.imageId, store: ImageStore.mock)
             .frame(width: UIScreen.main.bounds.width, height: 200)
         }
         .clipShape(RoundedRectangle(cornerRadius: 10.0, style: .continuous))

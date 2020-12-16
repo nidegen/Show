@@ -8,19 +8,25 @@
 
 import Foundation
 import UIKit
+import Tools
 
 class ImageLoader: ObservableObject {
   @Published var downloadedImage: UIImage?
-  var store: ImageStore
+  let store: ImageStore
+  let sizeClass: ImageSizeClass
   
-  init(store: ImageStore) {
+  init(store: ImageStore, sizeClass: ImageSizeClass = .original) {
     self.store = store
+    self.sizeClass = sizeClass
   }
   
   func load(id: Id) {
-    store.image(forId: id, type: .original) { image in
-      guard image != nil else { return }
-      self.downloadedImage = image
+    store.image(forId: id, type: sizeClass) { image in
+      if self.sizeClass == .thumbnail {
+        self.downloadedImage = image?.squared()
+      } else {
+        self.downloadedImage = image
+      }
     }
   }
 }

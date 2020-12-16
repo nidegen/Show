@@ -1,20 +1,13 @@
-//
-//  ImageStore.swift
-//  Echo
-//
-//  Created by Nicolas Degen on 18.09.20.
-//  Copyright © 2020 Echo Labs AG. All rights reserved.
-//
-
 import Foundation
 import UIKit
 
 public final class ImageStore {
-  var cache = ImageCache()
   public var server: ImageServer
+  public var cache: ImageCache
   
-  public init(server: ImageServer) {
+  public init(server: ImageServer, cache: ImageCache = ImageCache()) {
     self.server = server
+    self.cache = cache
   }
   
   public static var mock = ImageStore(server: MockServer())
