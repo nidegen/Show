@@ -27,11 +27,16 @@ public class ImageCache {
   private let fileManager = FileManager.default
   let cache = NSCache<NSString, UIImage>()
   
-  public func getImage(forId id: Id, minimalSize size: ImageSizeClass = .original) -> UIImage? {
-    if let cachedVersion = cache.object(forKey: (id + size.rawValue) as NSString) {
+  @discardableResult
+  public func getImages(ids: [Id], ofSize sizeClass: ImageSizeClass = .original) -> [UIImage] {
+    ids.compactMap { id in getImage(forId: id, ofSize: sizeClass) }
+  }
+  
+  public func getImage(forId id: Id, ofSize sizeClass: ImageSizeClass = .original) -> UIImage? {
+    if let cachedVersion = cache.object(forKey: (id + sizeClass.rawValue) as NSString) {
         return cachedVersion
     }
-    guard let url = fileManager.cachedImageUrl(forId: id, withSize: size) else { return nil }
+    guard let url = fileManager.cachedImageUrl(forId: id, ofSize: sizeClass) else { return nil }
     let pngUrl = url.appendingPathExtension("png")
     let jpgUrl = url.appendingPathExtension("jpg")
     if fileManager.fileExists(atPath: pngUrl.path) {
@@ -39,17 +44,20 @@ public class ImageCache {
     } else if fileManager.fileExists(atPath: jpgUrl.path) {
       return UIImage(contentsOfFile: jpgUrl.path)
     } else {
-      if size != size.nextLarger {
-        return getImage(forId: id, minimalSize: size.nextLarger)
-      } else {
-        return nil
-      }
+      return nil
     }
+  }
+  
+  public func getImage(forId id: Id, largerThan minimumSize: ImageSizeClass) -> UIImage? {
+    if minimumSize == .original {
+      return getImage(forId: id, ofSize: .original)
+    }
+    return getImage(forId: id, ofSize: minimumSize) ?? getImage(forId: id, largerThan: minimumSize.nextLarger)
   }
   
   public func setImage(_ image: UIImage, forId id: Id, size: ImageSizeClass = .original) {
     cache.setObject(image, forKey: (id + size.rawValue) as NSString)
-    guard var url = self.fileManager.cachedImageUrl(forId: id, withSize: size) else { return }
+    guard var url = self.fileManager.cachedImageUrl(forId: id, ofSize: size) else { return }
     url.appendPathExtension("jpg")
     do {
       try fileManager.createDirectory(atPath: url.deletingLastPathComponent().path, withIntermediateDirectories: true, attributes: nil)
@@ -63,7 +71,7 @@ public class ImageCache {
     if let image = UIImage(data: imageData) {
       cache.setObject(image, forKey: (id + size.rawValue) as NSString)
     }
-    guard var url = self.fileManager.cachedImageUrl(forId: id, withSize: size) else { return }
+    guard var url = self.fileManager.cachedImageUrl(forId: id, ofSize: size) else { return }
     url.appendPathExtension(imageData.imageFormat?.rawValue ?? "jpg")
     
     do {
@@ -91,7 +99,7 @@ extension FileManager {
     baseImageCacheUrl?.appendingPathComponent(id, isDirectory: true)
   }
   
-  func cachedImageUrl(forId id: Id, withSize size: ImageSizeClass = .original) -> URL? {
+  func cachedImageUrl(forId id: Id, ofSize size: ImageSizeClass = .original) -> URL? {
     cachedImageDirUrl(forId: id)?.appendingPathComponent(size.rawValue)
   }
 }

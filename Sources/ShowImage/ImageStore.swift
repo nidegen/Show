@@ -11,23 +11,42 @@ public final class ImageStore {
   }
   
   public static var mock = ImageStore(server: MockServer())
-    
-  public func image(forId id: Id, type: ImageSizeClass = .original, completion: @escaping (UIImage?)->()) {
-    if let cachedImage = cache.getImage(forId: id) {
+  
+  public func image(forId id: Id, sizeClass: ImageSizeClass = .original, completion: @escaping (UIImage?)->()) {
+    if let cachedImage = cache.getImage(forId: id, ofSize: sizeClass) {
       completion(cachedImage)
       return
     }
-    server.image(forId: id, type: type) { image in
-      completion(image)
-      image.map {
-        self.cache.setImage($0, forId: id)
+    DispatchQueue.global(qos: .background).async { [self] in
+      if sizeClass != .original,
+         let largerImage = cache.getImage(forId: id, largerThan: sizeClass.nextLarger),
+         var resized = largerImage.resized(toMax: sizeClass.maxSize) {
+          if sizeClass == .thumbnailSquared,
+             let sq = resized.squared() {
+            resized = sq
+          }
+          cache.setImage(resized, forId: id, size: sizeClass)
+          completion(resized)
+      } else {
+        server.image(forId: id, type: sizeClass) { image in
+          if var resized = image?.resized(toMax: sizeClass.maxSize) {
+            if sizeClass == .thumbnailSquared,
+               let sq = resized.squared() {
+              resized = sq
+            }
+            cache.setImage(resized, forId: id, size: sizeClass)
+            completion(resized)
+          } else {
+            completion(image)
+          }
+        }
       }
     }
   }
   
   @discardableResult
   public func uploadNewImage(_ photo: UIImage, id: Id = UUID().uuidString,
-                      maxResolution: CGFloat? = nil, compression: CGFloat = 0.5, completion: ((Id?)->())? = nil) -> Id {
+                             maxResolution: CGFloat? = nil, compression: CGFloat = 0.5, completion: ((Id?)->())? = nil) -> Id {
     server.uploadNewImage(photo, id: id, maxResolution: maxResolution, compression: compression, completion: completion)
     self.cache.setImage(photo, forId: id)
     return id

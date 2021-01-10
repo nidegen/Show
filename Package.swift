@@ -24,7 +24,7 @@ let package = Package(
       dependencies: ["ShowImage", "ShowVideo", "Tools"]),
     .target(
       name: "ShowImage",
-      dependencies: []),
+      dependencies: ["Tools"]),
     .target(
       name: "ShowVideo",
       dependencies: []),

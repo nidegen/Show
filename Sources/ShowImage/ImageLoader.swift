@@ -21,10 +21,8 @@ class ImageLoader: ObservableObject {
   }
   
   func load(id: Id) {
-    store.image(forId: id, type: sizeClass) { image in
-      if self.sizeClass == .thumbnail {
-        self.downloadedImage = image?.squared()
-      } else {
+    store.image(forId: id, sizeClass: sizeClass) { image in
+      DispatchQueue.main.async {
         self.downloadedImage = image
       }
     }

@@ -7,14 +7,30 @@
 //
 
 import Foundation
+import CoreGraphics
 
 public typealias Id = String
 
 public enum ImageSizeClass: String {
-  case original, thumbnail, large
+  case original, thumbnail, large, thumbnailSquared
+  
+  public var maxSize: CGFloat {
+    switch self {
+    case .thumbnailSquared:
+      return ImageSizeClass.thumbnail.maxSize;
+    case .thumbnail:
+      return 200
+    case .large:
+      return 1024
+    case .original:
+      return 8192
+    }
+  }
   
   public var nextLarger: ImageSizeClass {
     switch self {
+    case .thumbnailSquared:
+      return .thumbnail
     case .thumbnail:
       return .large
     case .large:
