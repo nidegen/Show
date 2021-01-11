@@ -9,13 +9,25 @@ public final class ImageStore {
     self.server = server
     self.cache = cache
   }
+  var ids = [Id]()
   
   public static var mock = ImageStore(server: MockServer())
   
   public func image(forId id: Id, sizeClass: ImageSizeClass = .original, completion: @escaping (UIImage?)->()) {
+    
+    if ids.contains(id) {
+      print("ha \(id) \(sizeClass.rawValue)")
+    }
+    
     if let cachedImage = cache.getImage(forId: id, ofSize: sizeClass) {
       completion(cachedImage)
+      ids.append(id)
       return
+    }
+    if ids.contains(id) {
+      print("hä \(id) \(sizeClass.rawValue)")
+    } else {
+      ids.append(id)
     }
     DispatchQueue.global(qos: .background).async { [self] in
       if sizeClass != .original,
@@ -28,17 +40,19 @@ public final class ImageStore {
           cache.setImage(resized, forId: id, size: sizeClass)
           completion(resized)
       } else {
-        server.image(forId: id, type: sizeClass) { image in
-          if var resized = image?.resized(toMax: sizeClass.maxSize) {
+        server.image(forId: id, withSize: sizeClass) { image in
+          var img = image
+          if sizeClass != .original {
+            img = image?.resized(toMax: sizeClass.maxSize)
             if sizeClass == .thumbnailSquared,
-               let sq = resized.squared() {
-              resized = sq
+              let sq = image?.squared() {
+              img = sq
             }
-            cache.setImage(resized, forId: id, size: sizeClass)
-            completion(resized)
-          } else {
-            completion(image)
           }
+          img.map {
+            cache.setImage($0, forId: id, size: sizeClass)
+          }
+          completion(img)
         }
       }
     }

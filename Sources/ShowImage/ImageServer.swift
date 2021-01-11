@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 public protocol ImageServer {
-  func image(forId id: Id, type: ImageSizeClass, completion: @escaping (UIImage?)->())
+  func image(forId id: Id, withSize size: ImageSizeClass, completion: @escaping (UIImage?)->())
   
   @discardableResult
   func uploadNewImage(_ photo: UIImage, id: Id,

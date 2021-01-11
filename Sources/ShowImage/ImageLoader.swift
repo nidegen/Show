@@ -22,9 +22,9 @@ class ImageLoader: ObservableObject {
   
   func load(id: Id) {
     store.image(forId: id, sizeClass: sizeClass) { image in
-      DispatchQueue.main.async {
+//      DispatchQueue.main.async {
         self.downloadedImage = image
-      }
+//      }
     }
   }
 }

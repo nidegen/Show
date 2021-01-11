@@ -39,13 +39,16 @@ public class ImageCache {
     guard let url = fileManager.cachedImageUrl(forId: id, ofSize: sizeClass) else { return nil }
     let pngUrl = url.appendingPathExtension("png")
     let jpgUrl = url.appendingPathExtension("jpg")
+    var image: UIImage?
     if fileManager.fileExists(atPath: pngUrl.path) {
-      return UIImage(contentsOfFile: pngUrl.path)
+      image = UIImage(contentsOfFile: pngUrl.path)
     } else if fileManager.fileExists(atPath: jpgUrl.path) {
-      return UIImage(contentsOfFile: jpgUrl.path)
-    } else {
-      return nil
+      image = UIImage(contentsOfFile: jpgUrl.path)
     }
+    image.map {
+      cache.setObject($0, forKey: (id + sizeClass.rawValue) as NSString)
+    }
+    return image
   }
   
   public func getImage(forId id: Id, largerThan minimumSize: ImageSizeClass) -> UIImage? {
