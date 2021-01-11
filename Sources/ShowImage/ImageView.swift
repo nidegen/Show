@@ -15,7 +15,7 @@ public struct ImageView: View {
   @ViewBuilder
   public var body: some View {
     if imageLoader.downloadedImage != nil {
-      Image(uiImage: imageLoader.downloadedImage!.withRenderingMode(.alwaysOriginal))
+      SwiftUI.Image(uiImage: imageLoader.downloadedImage!.withRenderingMode(.alwaysOriginal))
         .resizable()
         .aspectRatio(contentMode: .fill)
     } else {
@@ -37,7 +37,7 @@ public struct ImageView: View {
   var defaultPlaceholder: some View {
     ZStack {
       Color.black
-      Image(systemName: "photo")
+      SwiftUI.Image(systemName: "photo")
         .resizable()
         .aspectRatio(contentMode: .fill)
         .padding()

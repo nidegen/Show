@@ -18,8 +18,11 @@ final class ExifTests: XCTestCase {
   }
   
   func testGPS() {
-    let url = URL(string: "https://www.sylvaindurand.org/img/samples/thorsmork.jpg")!
-    let imageData = try! Data(contentsOf: url)
+    let url = URL(string: "https://img.colabug.com/2019/05/03dcba6bf57a73ae62a0b5bd8ec2d516.jpg")!
+    guard let imageData = try? Data(contentsOf: url) else {
+      XCTFail()
+      return
+    }
     
     let ciimage = CIImage(data: imageData)!
     

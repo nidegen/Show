@@ -11,7 +11,7 @@ import CoreGraphics
 
 public typealias Id = String
 
-public enum ImageSizeClass: String {
+public enum ImageSizeClass: String, CaseIterable {
   case original, thumbnail, large, thumbnailSquared
   
   public var maxSize: CGFloat {
@@ -38,5 +38,15 @@ public enum ImageSizeClass: String {
     case .original:
       return .original
     }
+  }
+  
+  public static func sizeClass(for imageSize: CGFloat) -> Self {
+    var sizeClass = Self.original
+    for tmp in ImageSizeClass.allCases {
+      if tmp.maxSize > imageSize, tmp.maxSize < sizeClass.maxSize {
+        sizeClass = tmp
+      }
+    }
+    return sizeClass
   }
 }

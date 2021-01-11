@@ -15,19 +15,10 @@ public final class ImageStore {
   
   public func image(forId id: Id, sizeClass: ImageSizeClass = .original, completion: @escaping (UIImage?)->()) {
     
-    if ids.contains(id) {
-      print("ha \(id) \(sizeClass.rawValue)")
-    }
-    
     if let cachedImage = cache.getImage(forId: id, ofSize: sizeClass) {
       completion(cachedImage)
       ids.append(id)
       return
-    }
-    if ids.contains(id) {
-      print("hä \(id) \(sizeClass.rawValue)")
-    } else {
-      ids.append(id)
     }
     DispatchQueue.global(qos: .background).async { [self] in
       if sizeClass != .original,
