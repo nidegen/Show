@@ -7,6 +7,7 @@ public struct ExifData: Codable {
   public let SubjectArea: [Int]?
   public let LensMake: String?
   public let LensModel: String?
+  public let Orientation: Int?
   public let LensSpecification: [Double]?
   public let FocalLenIn35mmFilm: Int?
   public let ColorSpace: Int?
@@ -27,8 +28,8 @@ public struct ExifData: Codable {
   public let FlashPixVersion: [Int]?
   public let DateTimeOriginal: Date?
   public let DateTimeDigitized: Date?
-  public let SubsecTimeOriginal: Int?
-  public let SubsecTimeDigitized: Int?
+  public let SubsecTimeOriginal: String?
+  public let SubsecTimeDigitized: String?
   public let SceneType: Int?
   public let SceneCaptureType: Int?
   public let ComponentsConfiguration: [Int]?

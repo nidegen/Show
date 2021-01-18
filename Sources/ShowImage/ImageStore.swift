@@ -9,7 +9,6 @@ public final class ImageStore {
     self.server = server
     self.cache = cache
   }
-  var ids = [Id]()
   
   public static var mock = ImageStore(server: MockServer())
   
@@ -17,10 +16,9 @@ public final class ImageStore {
     
     if let cachedImage = cache.getImage(forId: id, ofSize: sizeClass) {
       completion(cachedImage)
-      ids.append(id)
       return
     }
-    DispatchQueue.global(qos: .background).async { [self] in
+    DispatchQueue.main.async { [self] in
       if sizeClass != .original,
          let largerImage = cache.getImage(forId: id, largerThan: sizeClass.nextLarger),
          var resized = largerImage.resized(toMax: sizeClass.maxSize) {
@@ -49,9 +47,22 @@ public final class ImageStore {
     }
   }
   
+  public func getImages(ids: [Id], ofSize sizeClass: ImageSizeClass = .original, completion: (([UIImage]) -> ())? = nil) {
+    let group = DispatchGroup()
+    var images = [UIImage]()
+    for id in ids {
+        group.enter()
+      self.image(forId: id, sizeClass: sizeClass) { image in
+        image.map { images.append($0) }
+        group.leave()
+      }
+    }
+    completion?(images)
+  }
+  
   @discardableResult
   public func uploadNewImage(_ photo: UIImage, id: Id = UUID().uuidString,
-                             maxResolution: CGFloat? = nil, compression: CGFloat = 0.5, completion: ((Id?)->())? = nil) -> Id {
+                             maxResolution: CGFloat? = nil, compression: CGFloat = 0.5, completion: Completion? = nil) -> Id {
     server.uploadNewImage(photo, id: id, maxResolution: maxResolution, compression: compression, completion: completion)
     self.cache.setImage(photo, forId: id)
     return id
@@ -59,7 +70,7 @@ public final class ImageStore {
   
   
   @discardableResult
-  public func uploadNewImage(fromURL photoURL: URL, id: Id = UUID().uuidString, completion: ((Id?)->())? = nil) -> Id {
+  public func uploadNewImage(fromURL photoURL: URL, id: Id = UUID().uuidString, completion: Completion? = nil) -> Id {
     server.uploadNewImage(fromURL: photoURL, id: id, completion: completion)
     UIImage(contentsOfFile: photoURL.path).map {
       self.cache.setImage($0, forId: id)

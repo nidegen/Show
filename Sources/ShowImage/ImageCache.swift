@@ -10,7 +10,13 @@ import Foundation
 import UIKit
 
 public class ImageCache {
-  public init() {}
+  private let fileManager = FileManager.default
+  let cache = NSCache<NSString, UIImage>()
+  
+  public init() {
+    cache.countLimit = 30
+  }
+  
   
   public func deleteCache() {
     guard let cacheURL = fileManager.baseImageCacheUrl else { return }
@@ -23,9 +29,6 @@ public class ImageCache {
       try? fileManager.removeItem(atPath: cacheURL.path)
     }
   }
-  
-  private let fileManager = FileManager.default
-  let cache = NSCache<NSString, UIImage>()
   
   @discardableResult
   public func getImages(ids: [Id], ofSize sizeClass: ImageSizeClass = .original) -> [UIImage] {
