@@ -13,7 +13,7 @@ public struct ZoomImageView: UIViewRepresentable {
     // set up the UIScrollView
     let scrollView = UIScrollView()
     scrollView.delegate = context.coordinator  // for viewForZooming(in:)
-    scrollView.maximumZoomScale = context.coordinator.mazZoom
+    scrollView.maximumZoomScale = context.coordinator.maxZoom
     scrollView.minimumZoomScale = context.coordinator.minZoom
     scrollView.bouncesZoom = true
     
@@ -32,6 +32,8 @@ public struct ZoomImageView: UIViewRepresentable {
   }
   
   public func updateUIView(_ uiView: UIScrollView, context: Context) {
+    context.coordinator.id = self.id
+    uiView.zoomScale = 0
   }
   
   // MARK: - Coordinator
@@ -39,17 +41,27 @@ public struct ZoomImageView: UIViewRepresentable {
   public class Coordinator: NSObject, UIScrollViewDelegate {
     let imageView: UIImageView = UIImageView(frame: .zero)
     let imageStore: ImageStore
+    var id: Id {
+      didSet {
+        self.imageView.image = nil
+        
+        imageStore.image(forId: id) { image in
+          self.imageView.image = image
+        }
+      }
+    }
     
-    var mazZoom: CGFloat = 20
+    var maxZoom: CGFloat = 20
     var minZoom: CGFloat = 1
     
     init(image id: Id, imageStore: ImageStore) {
       self.imageStore = imageStore
+      self.id = id
       super.init()
+      self.imageView.contentMode = .scaleAspectFit
       
       imageStore.image(forId: id) { image in
         self.imageView.image = image
-        self.imageView.contentMode = .scaleAspectFit
       }
     }
     

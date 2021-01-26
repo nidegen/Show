@@ -27,8 +27,9 @@ class MockServer: ImageServer {
     if let image = store[id] {
       completion(image)
     } else {
-      let new = try? UIImage(data: Data(contentsOf: URL(string: "https://source.unsplash.com/random/\(id)")!))
+//      let new = try? UIImage(data: Data(contentsOf: URL(string: "https://source.unsplash.com/random/\(id)")!))
 //      let new = UIImage(contentsOfFile: Bundle.main.url(forResource: "ErhKqMSXMAEIv1t", withExtension: "jpeg")!.path)
+      let new = UIImage(systemName: id)
       if let image = new {
         store[id] = image
         completion(image)

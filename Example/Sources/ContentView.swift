@@ -10,13 +10,19 @@ import ShowImage
 import Show
 
 struct ContentView: View {
-  @State var image = "a1"
+  @State var image = "gear"
+  
+  var options = ["gear", "person", "swift"]
+  
   var body: some View {
     VStack {
-      GalleryView(images: ["a1", "b1", "c1"], currentImage: $image, store: .mock)
+      GalleryView(images: ["gear", "person", "swift"], currentImage: $image, store: .mock)
       Text(image)
+      ZoomImageView(id: image, imageStore: .mock)
+      Button("next") {
+        image = options[Int.random(in: 0...2)]
+      }
     }
-//    ZoomImageView(id: "test", imageStore: .mock)
   }
 }
 
