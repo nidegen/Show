@@ -16,6 +16,7 @@ struct ContentView: View {
       GalleryView(images: ["a1", "b1", "c1"], currentImage: $image, store: .mock)
       Text(image)
     }
+//    ZoomImageView(id: "test", imageStore: .mock)
   }
 }
 

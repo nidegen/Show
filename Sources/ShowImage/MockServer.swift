@@ -16,6 +16,7 @@ class MockServer: ImageServer {
       return id
     }
   }
+  
   func uploadNewImage(_ photo: UIImage, id: Id, maxResolution: CGFloat?, compression: CGFloat, completion: Completion? = nil) -> Id {
     store[id] = photo
     completion?(.success(id))
@@ -23,16 +24,21 @@ class MockServer: ImageServer {
   }
   
   func image(forId id: Id, withSize size: ImageSizeClass, completion: @escaping (UIImage?) -> ()) {
-    let image = store[id]
-    completion(image)
+    if let image = store[id] {
+      completion(image)
+    } else {
+      let new = try? UIImage(data: Data(contentsOf: URL(string: "https://source.unsplash.com/random/\(id)")!))
+//      let new = UIImage(contentsOfFile: Bundle.main.url(forResource: "ErhKqMSXMAEIv1t", withExtension: "jpeg")!.path)
+      if let image = new {
+        store[id] = image
+        completion(image)
+      } else {
+        completion(nil)
+      }
+    }
   }
   
   func deleteImage(withId id: Id) {
     store[id] = nil
-  }
-  
-  func getNewImage(id: Id) -> UIImage? {
-    try? UIImage(data: Data(contentsOf: URL(string: "https://source.unsplash.com/random/\(id)")!))
-
   }
 }

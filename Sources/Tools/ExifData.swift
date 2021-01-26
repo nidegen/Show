@@ -45,9 +45,9 @@ extension Dictionary where Key == String, Value: Any {
   func object<T: Decodable>() -> T? {
     if let data = try? JSONSerialization.data(withJSONObject: self, options: []) {
       
-      if let jsonString = String(data: data, encoding: .utf8) {
-        print(jsonString)
-      }
+//      if let jsonString = String(data: data, encoding: .utf8) {
+//        print(jsonString)
+//      }
       do {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .formatted(.exifDateFormatter)

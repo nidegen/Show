@@ -1,2 +1,16 @@
 .build
 .swiftpm/*
+*.png
+*.jpg
+*.mp4
+
+Carthage/*
+Snup.ipa
+Gemfile
+Cartfile.resolved
+
+fastlane/report.xml
+xcuserdata/
+Firebase/
+tmp/
+*.DS_Store
