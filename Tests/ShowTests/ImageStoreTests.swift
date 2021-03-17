@@ -35,6 +35,6 @@ final class ImageStoreTests: XCTestCase {
       XCTAssert(image.maxSize <= sizeClass.maxSize);
       expectation.fulfill()
     }
-    wait(for: [expectation], timeout: 100.0)
+    wait(for: [expectation], timeout: 3.0)
   }
 }
