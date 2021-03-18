@@ -2,11 +2,10 @@ import SwiftUI
 
 public struct ZoomImageView: UIViewRepresentable {
   var id: Id
-  var store: ImageStore
+  @EnvironmentObject var store: ImageStore
   
-  public init(id: Id, imageStore: ImageStore) {
+  public init(id: Id) {
     self.id = id
-    store = imageStore
   }
   
   public func makeUIView(context: Context) -> UIScrollView {

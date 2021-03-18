@@ -19,9 +19,10 @@ public struct GalleryView<Image: ImageDescription>: View {
       ForEach(images) { image in
         ZStack {
           Color.black
-          ZoomImageView(id: image.imageId, imageStore: ImageStore.mock)
+          ZoomImageView(id: image.imageId)
         }
       }
+      .environmentObject(ImageStore.mock)
     }
     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
   }

@@ -54,6 +54,13 @@ public class ImageCache {
     return image
   }
   
+  public func getImage(forId id: Id, notLargerThan maximumSize: ImageSizeClass) -> UIImage? {
+    if maximumSize == .thumbnailSquared {
+      return getImage(forId: id, ofSize: .thumbnailSquared)
+    }
+    return getImage(forId: id, ofSize: maximumSize) ?? getImage(forId: id, largerThan: maximumSize.nextSmaller)
+  }
+  
   public func getImage(forId id: Id, largerThan minimumSize: ImageSizeClass) -> UIImage? {
     if minimumSize == .original {
       return getImage(forId: id, ofSize: .original)

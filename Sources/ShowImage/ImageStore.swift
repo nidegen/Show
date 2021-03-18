@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-public final class ImageStore {
+public final class ImageStore: ObservableObject {
   public var server: ImageServer
   public var cache: ImageCache
   
