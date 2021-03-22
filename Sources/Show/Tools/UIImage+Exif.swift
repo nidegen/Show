@@ -29,13 +29,14 @@ public extension UIImage {
   var exif: ExifData? {
     ciImage?.exif
   }
-
-  var gpsPropertyDictionary: [String: Any]? {
-    properties["{GPS}"] as? [String: Any]
-  }
-
+  
   var gps: GPSData? {
     ciImage?.gps
+  }
+  
+  func imageWith(exif: ExifData? = nil, gps: GPSData? = nil) -> UIImage {
+    guard var ciImage = self.ciImage else { return self }
+    return UIImage(ciImage: ciImage.imageWith(exif: exif, gps: gps))
   }
 }
 

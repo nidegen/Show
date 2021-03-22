@@ -103,7 +103,7 @@ public extension CIImage {
   func imageWith(exif: ExifData? = nil, gps: GPSData? = nil) -> CIImage {
     var props = properties
     exif.map { props["{Exif}"] = $0.dict }
-    exif.map { props["{GPS}"] = $0.dict }
+    gps.map { props["{GPS}"] = $0.dict }
     return settingProperties(props)
   }
 
