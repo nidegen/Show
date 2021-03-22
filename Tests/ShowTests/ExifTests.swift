@@ -1,5 +1,5 @@
 import XCTest
-@testable import Tools
+@testable import Show
 
 final class ExifTests: XCTestCase {
   func testExif() {

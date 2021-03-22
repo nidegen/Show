@@ -1,6 +1,4 @@
 import SwiftUI
-import ShowVideo
-import ShowImage
 
 // This is a debug View as SwiftUI Previews only work in a target of the same name as the package
 struct DebugView: View {

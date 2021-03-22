@@ -17,41 +17,65 @@ func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMe
   
 }
 
-extension UIImage {
-  func getExifDataB() -> NSDictionary? {
-    if let imageData = self.jpegData(compressionQuality: 1.0) {
-      let imageCFData = imageData as CFData
-      if let cgImage = CGImageSourceCreateWithData(imageCFData, nil), let metaDict: NSDictionary = CGImageSourceCopyPropertiesAtIndex(cgImage, 0, nil) {
-        let exifDict: NSDictionary = metaDict.object(forKey: kCGImagePropertyExifDictionary) as! NSDictionary
-        return exifDict
-      }
-    }
-    return nil
+public extension UIImage {
+  func applying(exif: ExifData? = nil, gps: GPSData? = nil) -> UIImage {
+    guard let image = self.ciImage else { return self }
+    var props = image.properties
+    exif.map { props["{Exif}"] = $0.dict }
+    exif.map { props["{GPS}"] = $0.dict }
+    return UIImage(ciImage: image.settingProperties(props))
   }
   
-  func getExifDataA() -> CFDictionary? {
-    var exifData: CFDictionary? = nil
-    if let data = self.jpegData(compressionQuality: 1.0) {
-      data.withUnsafeBytes {
-        let bytes = $0.baseAddress?.assumingMemoryBound(to: UInt8.self)
-        if let cfData = CFDataCreate(kCFAllocatorDefault, bytes, data.count),
-           let source = CGImageSourceCreateWithData(cfData, nil) {
-          exifData = CGImageSourceCopyPropertiesAtIndex(source, 0, nil)
-        }
-      }
-    }
-    return exifData
+  var exif: ExifData? {
+    ciImage?.exif
   }
-  
-  func write(toUrl: URL, withJPEGQuality quality: CGFloat, withMetadata metadata: NSMutableDictionary, location: CLLocation) {
-    let imageData = self.jpegData(compressionQuality: quality)
-    metadata[kCGImagePropertyGPSDictionary as String] = location.exifMetadata()
-    
-    let annotatedImageData: NSMutableData = writeMetadata(intoImageData: imageData, metadata: metadata)
 
-    try! annotatedImageData.write(to: URL(fileURLWithPath: "asdf"))
-    return
+  var gpsPropertyDictionary: [String: Any]? {
+    properties["{GPS}"] as? [String: Any]
   }
+
+  var gps: GPSData? {
+    ciImage?.gps
+  }
+}
+
+extension UIImage {
+  
+//  func getExifDataB() -> NSDictionary? {
+//    if let imageData = self.jpegData(compressionQuality: 1.0) {
+//      let imageCFData = imageData as CFData
+//      if let cgImage = CGImageSourceCreateWithData(imageCFData, nil), let metaDict: NSDictionary = CGImageSourceCopyPropertiesAtIndex(cgImage, 0, nil) {
+//        let exifDict: NSDictionary = metaDict.object(forKey: kCGImagePropertyExifDictionary) as! NSDictionary
+//        return exifDict
+//      }
+//    }
+//    return nil
+//  }
+//  
+//  
+//  func getExifDataA() -> CFDictionary? {
+//    var exifData: CFDictionary? = nil
+//    if let data = self.jpegData(compressionQuality: 1.0) {
+//      data.withUnsafeBytes {
+//        let bytes = $0.baseAddress?.assumingMemoryBound(to: UInt8.self)
+//        if let cfData = CFDataCreate(kCFAllocatorDefault, bytes, data.count),
+//           let source = CGImageSourceCreateWithData(cfData, nil) {
+//          exifData = CGImageSourceCopyPropertiesAtIndex(source, 0, nil)
+//        }
+//      }
+//    }
+//    return exifData
+//  }
+  
+//  func write(toUrl: URL, withJPEGQuality quality: CGFloat, withMetadata metadata: NSMutableDictionary, location: CLLocation) {
+//    let imageData = self.jpegData(compressionQuality: quality)
+//    metadata[kCGImagePropertyGPSDictionary as String] = location.exifMetadata()
+//
+//    let annotatedImageData: NSMutableData = writeMetadata(intoImageData: imageData, metadata: metadata)
+//
+//    try! annotatedImageData.write(to: URL(fileURLWithPath: "asdf"))
+//    return
+//  }
 }
 
 extension UIImage.Orientation {

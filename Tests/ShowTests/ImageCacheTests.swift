@@ -1,5 +1,5 @@
 import XCTest
-@testable import ShowImage
+@testable import Show
 
 final class ImageCacheTests: XCTestCase {
   var cache = ImageCache()

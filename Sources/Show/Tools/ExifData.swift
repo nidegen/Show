@@ -54,6 +54,16 @@ public struct ExifData: Codable {
   public let ImageUniqueID: String?
 }
 
+public extension Encodable {
+  var jsonData: Data? { try? JSONEncoder().encode(self) }
+  
+  var dict: [String: Any] {
+    guard let data = self.jsonData else { return [:] }
+    guard let dict = try? JSONSerialization.jsonObject(with: data, options: .allowFragments)  else { return [:] }
+    return dict as? [String: Any] ?? [:]
+  }
+}
+
 public extension ExifData {
   var width: Int? { PixelXDimension }
   var height: Int? { PixelYDimension }
@@ -62,9 +72,6 @@ public extension ExifData {
 extension Dictionary where Key == String, Value: Any {
   func object<T: Decodable>() -> T? {
     if let data = try? JSONSerialization.data(withJSONObject: self, options: []) {
-//      if let jsonString = String(data: data, encoding: .utf8) {
-//        print(jsonString)
-//      }
       do {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .formatted(.exifDateFormatter)
@@ -91,6 +98,13 @@ public extension DateFormatter {
 public extension CIImage {
   var exifPropertyDictionary: [String: Any]? {
     properties["{Exif}"] as? [String: Any]
+  }
+  
+  func imageWith(exif: ExifData? = nil, gps: GPSData? = nil) -> CIImage {
+    var props = properties
+    exif.map { props["{Exif}"] = $0.dict }
+    exif.map { props["{GPS}"] = $0.dict }
+    return settingProperties(props)
   }
 
   var exif: ExifData? {

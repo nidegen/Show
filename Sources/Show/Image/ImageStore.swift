@@ -83,10 +83,10 @@ public final class ImageStore: ObservableObject {
     cache.deleteImage(withId: id)
   }
   
-  public func saveToLibrary(id: Id) {
+  public func saveToLibrary(id: Id, exif: ExifData? = nil, gps: GPSData? = nil) {
     image(forId: id) { optionalImage in
       guard let image = optionalImage else { return }
-      UIImageWriteToSavedPhotosAlbum(image, self, nil, nil)
+      UIImageWriteToSavedPhotosAlbum(image.imageWith(exif: exif, gps: gps), self, nil, nil)
     }
   }
 }

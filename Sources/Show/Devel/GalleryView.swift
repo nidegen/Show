@@ -1,5 +1,4 @@
 import SwiftUI
-import ShowImage
 
 public struct GalleryView<Image: ImageDescription>: View {
   public init(images: [Image], currentImage: Binding<Image>, store: ImageStore) {

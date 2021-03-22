@@ -1,6 +1,6 @@
 import XCTest
-import Tools
-@testable import ShowImage
+import UIKit
+@testable import Show
 
 final class ImageStoreTests: XCTestCase {
   var store = ImageStore(server: MockServer())
@@ -21,8 +21,7 @@ final class ImageStoreTests: XCTestCase {
   }
   
   func testSizeClassCached(sizeClass: ImageSizeClass) {
-    let image = store.cache.getImage(forId: "test", ofSize: sizeClass)
-    guard let img = image else { XCTFail(); return }
+    guard let img = store.cache.getImage(forId: "test", ofSize: sizeClass) else { XCTFail(); return }
     print(img.maxSize)
     XCTAssert(img.maxSize <= sizeClass.maxSize);
   }
