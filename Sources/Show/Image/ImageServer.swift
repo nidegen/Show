@@ -17,11 +17,11 @@ public protocol ImageServer {
   func uploadNewImage(_ photo: UIImage, id: Id,
                       maxResolution: CGFloat?,
                       compression: CGFloat,
-                      completion: Completion?) -> UploadObserver
+                      completion: Completion?) -> UploadTask
   
   func uploadNewImage(fromURL photoURL: URL,
                       id: Id,
-                      completion: Completion?) -> UploadObserver
+                      completion: Completion?) -> UploadTask
   
   func deleteImage(withId id: Id)
 }

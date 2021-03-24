@@ -1,10 +1,10 @@
 import Foundation
 import UIKit
 
-class MockUploadObserver: UploadObserver {
-  var state: UploadState = .paused
-  
-  var completion: Completion?
+class MockUploadTask: UploadTask {
+  var state: UploadState = .paused(0)
+  var image: URL = URL(fileURLWithPath: "/s")
+  var onStateChange: ((UploadState) -> ()) = { _ in }
   
   var id: Id = UUID().uuidString
   var progress: Float = 0
@@ -13,8 +13,8 @@ class MockUploadObserver: UploadObserver {
 }
 
 class MockServer: ImageServer {
-  func uploadNewImage(fromURL photoURL: URL, id: Id, completion: Completion?) -> UploadObserver {
-    return MockUploadObserver()
+  func uploadNewImage(fromURL photoURL: URL, id: Id, completion: Completion?) -> UploadTask {
+    return MockUploadTask()
   }
   
   
@@ -32,10 +32,10 @@ class MockServer: ImageServer {
     }
   }
   
-  func uploadNewImage(_ photo: UIImage, id: Id, maxResolution: CGFloat?, compression: CGFloat, completion: Completion? = nil) -> UploadObserver {
+  func uploadNewImage(_ photo: UIImage, id: Id, maxResolution: CGFloat?, compression: CGFloat, completion: Completion? = nil) -> UploadTask {
     store[id] = photo
     completion?(.success(id))
-    return MockUploadObserver()
+    return MockUploadTask()
   }
   
   func image(forId id: Id, withSize size: ImageSizeClass, completion: @escaping (UIImage?) -> ()) {
