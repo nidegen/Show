@@ -2,6 +2,8 @@ import Foundation
 import UIKit
 
 class MockUploadObserver: UploadObserver {
+  var state: UploadState = .paused
+  
   var completion: Completion?
   
   var id: Id = UUID().uuidString
