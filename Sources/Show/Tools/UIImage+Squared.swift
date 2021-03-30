@@ -9,8 +9,14 @@ extension UIImage {
   var newX: CGFloat { isLandscape ? ((size.width - size.height)/2).rounded(.down) : 0 }
   var newY: CGFloat { isPortrait  ? ((size.height - size.width)/2).rounded(.down) : 0 }
   
-  public func squared(isOpaque: Bool = false) -> UIImage? {
-    guard let cgImage = cgImage?
+  public func squared(size: CGFloat? = nil, isOpaque: Bool = false) -> UIImage? {
+    var image: UIImage
+    if let size = size, let resized = self.resize(clampingMin: size) {
+      image = resized
+    } else {
+      image = self
+    }
+    guard let cgImage = image.cgImage?
             .cropping(to: .init(origin: .init(x: newX, y: newY),
                                 size: breadthSize)) else { return nil }
     let format = imageRendererFormat
