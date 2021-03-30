@@ -27,6 +27,32 @@ public extension UIImage {
     return nil
   }
   
+  func resize(clampingMin maxResolution: CGFloat) -> UIImage? {
+    if self.size.height > self.size.width {
+      if self.size.width > maxResolution {
+        return self.resized(toWidth: maxResolution)
+      }
+    } else {
+      if self.size.height > maxResolution {
+        return self.resized(toHeight: maxResolution)
+      }
+    }
+    return nil
+  }
+  
+  func resized(clampingMax maxResolution: CGFloat) -> UIImage? {
+    if self.size.width > self.size.height {
+      if self.size.width > maxResolution {
+        return self.resized(toWidth: maxResolution)
+      }
+    } else {
+      if self.size.height > maxResolution {
+        return self.resized(toHeight: maxResolution)
+      }
+    }
+    return nil
+  }
+  
   func resized(toWidth width: CGFloat, isOpaque: Bool = true) -> UIImage? {
     let canvas = CGSize(width: width, height: CGFloat(ceil(width/size.width * size.height)))
     let format = imageRendererFormat
