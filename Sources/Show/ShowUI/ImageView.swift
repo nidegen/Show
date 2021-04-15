@@ -4,25 +4,29 @@ public struct ImageView: View {
   @StateObject private var imageLoader = ImageLoader()
   @EnvironmentObject var store: ImageStore
   
-  public var placeholder: AnyView?
-
-  public init(id: Id?, sizeClass: ImageSizeClass = .original) {
-    id.map {
-      imageLoader.load(id: $0, store: store, sizeClass: sizeClass)
-    }
-  }
+  public let placeholder: AnyView?
+  
+  let id: Id?
+  let sizeClass: ImageSizeClass = .original
   
   @ViewBuilder
   public var body: some View {
-    if imageLoader.image != nil {
-      SwiftUI.Image(uiImage: imageLoader.image!.withRenderingMode(.alwaysOriginal))
-        .resizable()
-        .aspectRatio(contentMode: .fill)
-    } else {
-      if let placeholder = placeholder {
-        placeholder
+    Group {
+      if imageLoader.image != nil {
+        SwiftUI.Image(uiImage: imageLoader.image!.withRenderingMode(.alwaysOriginal))
+          .resizable()
+          .aspectRatio(contentMode: .fill)
       } else {
-        defaultPlaceholder
+        if let placeholder = placeholder {
+          placeholder
+        } else {
+          defaultPlaceholder
+        }
+      }
+    }
+    .onAppear{
+      id.map {
+        imageLoader.load(id: $0, store: store, sizeClass: sizeClass)
       }
     }
   }
