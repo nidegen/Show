@@ -4,7 +4,7 @@ public struct ImageView: View {
   @StateObject private var imageLoader = ImageLoader()
   @EnvironmentObject var store: ImageStore
   
-  public let placeholder: AnyView?
+  public var placeholder: AnyView?
   
   let id: Id?
   let sizeClass: ImageSizeClass = .original
