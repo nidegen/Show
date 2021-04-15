@@ -10,6 +10,8 @@ public final class ImageStore: ObservableObject {
     self.cache = cache
   }
   
+  public static var defaultStore: ImageStore?
+  
   public static var mock = ImageStore(server: MockServer())
   
   public func image(forId id: Id, sizeClass: ImageSizeClass = .original, completion: @escaping (UIImage?)->()) {

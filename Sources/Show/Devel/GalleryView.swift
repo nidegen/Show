@@ -21,7 +21,6 @@ public struct GalleryView<Image: ImageDescription>: View {
           ZoomImageView(id: image.imageId)
         }
       }
-      .environmentObject(ImageStore.mock)
     }
     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
   }

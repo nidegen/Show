@@ -2,12 +2,20 @@ import SwiftUI
 
 public struct ImageView: View {
   @StateObject private var imageLoader = ImageLoader()
-  @EnvironmentObject var store: ImageStore
   
-  public var placeholder: AnyView?
-  
+  let store: ImageStore
   let id: Id?
-  let sizeClass: ImageSizeClass = .original
+  let sizeClass: ImageSizeClass
+  public var placeholder: AnyView?
+
+  public init(id: Id?, sizeClass: ImageSizeClass = .original, store: ImageStore = (.defaultStore ?? .mock)) {
+    self.id = id
+    self.store = store
+    self.sizeClass = sizeClass
+    id.map {
+      imageLoader.load(id: $0, store: store, sizeClass: sizeClass)
+    }
+  }
   
   @ViewBuilder
   public var body: some View {
@@ -45,6 +53,7 @@ public struct ImageView: View {
         .resizable()
         .aspectRatio(contentMode: .fill)
         .padding()
+        .foregroundColor(.white)
     }
   }
 }
@@ -52,6 +61,5 @@ public struct ImageView: View {
 struct ImageView_Previews: PreviewProvider {
   static var previews: some View {
     ImageView(id: "nbl")
-      .environmentObject(ImageStore(server: MockServer()))
   }
 }

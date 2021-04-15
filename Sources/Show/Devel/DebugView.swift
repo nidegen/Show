@@ -11,7 +11,6 @@ struct DebugView: View {
         .padding()
       Spacer()
     }
-    .environmentObject(ImageStore.mock)
   }
 }
 
