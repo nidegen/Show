@@ -35,7 +35,7 @@ public extension UIImage {
   }
   
   func imageWith(exif: ExifData? = nil, gps: GPSData? = nil) -> UIImage {
-    guard var ciImage = self.ciImage else { return self }
+    guard let ciImage = self.ciImage else { return self }
     return UIImage(ciImage: ciImage.imageWith(exif: exif, gps: gps))
   }
 }

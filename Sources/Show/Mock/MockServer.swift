@@ -1,10 +1,10 @@
 import Foundation
 import UIKit
 
-class MockUploadTask: UploadTask {
+class MockUploadTask: UploadTask {  
   var state: UploadState = .paused(0)
-  var image: URL = URL(fileURLWithPath: "/s")
-  var onStateChange: ((UploadState) -> ()) = { _ in }
+  var localImageURL: URL = URL(fileURLWithPath: "/s")
+  var onStateChange: ((UploadTask) -> ()) = { _ in }
   
   var id: Id = UUID().uuidString
   var progress: Float = 0

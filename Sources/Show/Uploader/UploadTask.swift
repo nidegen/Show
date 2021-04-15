@@ -4,14 +4,14 @@ public enum UploadState: Equatable {
   case paused(Float), uploading(Float), completed, failed
 }
 
-public protocol UploadTask {
+public protocol UploadTask: class {
   var id: Id { get }
-  var image: URL { get }
+  var localImageURL: URL { get }
   
   var state: UploadState { get }
   
   func pause()
   func resume()
   
-  var onStateChange: (UploadState) -> () { get set }
+  var onStateChange: (UploadTask) -> () { get set }
 }
