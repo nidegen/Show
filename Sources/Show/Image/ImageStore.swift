@@ -2,8 +2,9 @@ import Foundation
 import UIKit
 
 public final class ImageStore: ObservableObject {
-  public var server: ImageServer
-  public var cache: ImageCache
+  public let server: ImageServer
+  public let cache: ImageCache
+  public let uploadObserver = UploadObserver()
   
   public init(server: ImageServer, cache: ImageCache = ImageCache()) {
     self.server = server
@@ -67,6 +68,7 @@ public final class ImageStore: ObservableObject {
                              maxResolution: CGFloat? = nil, compression: CGFloat = 0.5, completion: Completion? = nil) -> UploadTask {
     let task = server.uploadNewImage(photo, id: id, maxResolution: maxResolution, compression: compression, completion: completion)
     self.cache.setImage(photo, forId: id)
+    self.uploadObserver.add(task: task)
     return task
   }
   
@@ -77,6 +79,7 @@ public final class ImageStore: ObservableObject {
     UIImage(contentsOfFile: photoURL.path).map {
       self.cache.setImage($0, forId: id)
     }
+    self.uploadObserver.add(task: task)
     return task
   }
   

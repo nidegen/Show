@@ -6,15 +6,12 @@ public struct ImageView: View {
   let store: ImageStore
   let id: Id?
   let sizeClass: ImageSizeClass
-  public var placeholder: AnyView?
+  public var placeholder: AnyView? = nil
 
   public init(id: Id?, sizeClass: ImageSizeClass = .original, store: ImageStore = (.defaultStore ?? .mock)) {
     self.id = id
     self.store = store
     self.sizeClass = sizeClass
-    id.map {
-      imageLoader.load(id: $0, store: store, sizeClass: sizeClass)
-    }
   }
   
   @ViewBuilder
