@@ -3,13 +3,13 @@ import CoreLocation
 
 public struct GPSData: Codable {
   public var VersionID: [Int]?
-  var LatitudeRef: String?
-  var Latitude: Double?
-  var LongitudeRef: String?
-  var Longitude: Double?
-  var AltitudeRef: Int?
-  var Altitude: Double?
-  var TimeStamp: String?
+  public var LatitudeRef: String?
+  public var Latitude: Double?
+  public var LongitudeRef: String?
+  public var Longitude: Double?
+  public var AltitudeRef: Int?
+  public var Altitude: Double?
+  public var TimeStamp: String?
   public var Satellites: String?
   public var Status: [String]?
   public var MeasureMode: [String]?
@@ -21,23 +21,24 @@ public struct GPSData: Codable {
   public var ImgDirectionRef: String?
   public var ImgDirection: Double?
   public var MapDatum: String?
-  var DestLatitudeRef: String?
-  var DestLatitude: Double?
-  var DestLongitudeRef: String?
-  var DestLongitude: Double?
+  public var DestLatitudeRef: String?
+  public var DestLatitude: Double?
+  public var DestLongitudeRef: String?
+  public var DestLongitude: Double?
   public var DestBearingRef: String?
   public var DestBearing: Double?
-  var DestDistanceRef: String?
-  var DestDistance: Double?
+  public var DestDistanceRef: String?
+  public var DestDistance: Double?
   public var ProcessingMethod: String?
   public var AreaInformation: String?
-  var DateStamp: String?
+  public var DateStamp: String?
   public var Differential: Int? //0 = No Correction; 1 = Differential Corrected
   public var HPositioningError: Double?
+  
+  public init(){}
 }
 
 public extension GPSData {
-  
   var timeStamp: Date? {
     guard let time = TimeStamp else { return nil }
     guard let date = DateStamp else { return nil }
