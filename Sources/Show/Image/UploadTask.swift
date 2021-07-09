@@ -4,7 +4,7 @@ public enum UploadState: Equatable {
   case paused(Float), uploading(Float), completed, failed
 }
 
-public protocol UploadTask: class {
+public protocol UploadTask: AnyObject {
   var id: Id { get }
   var localImageURL: URL { get }
   
