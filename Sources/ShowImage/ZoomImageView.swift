@@ -4,9 +4,16 @@ public struct ZoomImageView: UIViewRepresentable {
   var id: Id
   var store: ImageStore
   
-  public init(id: Id, imageStore: ImageStore) {
+  var maxZoom: CGFloat
+  var minZoom: CGFloat
+  
+  public init(id: Id, imageStore: ImageStore,
+              maxZoom: CGFloat = 20,
+              minZoom: CGFloat = 1) {
     self.id = id
     store = imageStore
+    self.maxZoom = maxZoom
+    self.minZoom = minZoom
   }
   
   public func makeUIView(context: Context) -> UIScrollView {
@@ -33,7 +40,7 @@ public struct ZoomImageView: UIViewRepresentable {
   }
   
   public func makeCoordinator() -> Coordinator {
-    return Coordinator(image: id, imageStore: store)
+    return Coordinator(image: id, imageStore: store, maxZoom: maxZoom, minZoom: minZoom)
   }
   
   public func updateUIView(_ uiView: UIScrollView, context: Context) {
@@ -59,10 +66,13 @@ public struct ZoomImageView: UIViewRepresentable {
       }
     }
     
-    var maxZoom: CGFloat = 20
-    var minZoom: CGFloat = 1
+    var maxZoom: CGFloat
+    var minZoom: CGFloat
     
-    init(image id: Id, imageStore: ImageStore) {
+    init(image id: Id, imageStore: ImageStore,
+         maxZoom: CGFloat, minZoom: CGFloat) {
+      self.maxZoom = maxZoom
+      self.minZoom = minZoom
       self.imageStore = imageStore
       self.id = id
       super.init()
