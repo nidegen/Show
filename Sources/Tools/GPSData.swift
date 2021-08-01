@@ -39,6 +39,17 @@ public struct GPSData: Codable {
 }
 
 public extension GPSData {
+  
+  static var exampleData: GPSData {
+    var gpsData = GPSData()
+    gpsData.Latitude = 45
+    gpsData.Longitude = 12
+    gpsData.Altitude = 200
+    gpsData.TimeStamp = "23:22:21"
+    gpsData.DateStamp = "2020:11:22"
+    return gpsData
+  }
+  
   var timeStamp: Date? {
     guard let time = TimeStamp else { return nil }
     guard let date = DateStamp else { return nil }

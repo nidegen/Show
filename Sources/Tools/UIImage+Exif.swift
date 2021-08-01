@@ -48,7 +48,7 @@ extension UIImage {
     metadata[kCGImagePropertyGPSDictionary as String] = location.exifMetadata()
     
     let annotatedImageData: NSMutableData = writeMetadata(intoImageData: imageData, metadata: metadata)
-
+    
     try! annotatedImageData.write(to: URL(fileURLWithPath: "asdf"))
     return
   }
@@ -80,7 +80,7 @@ extension UIImage.Orientation {
     return newOrientation
   }
   //  usage:
-//  metaData[kCGImagePropertyOrientation as String] = orientation.cgImagePropertyOrientation
+  //  metaData[kCGImagePropertyOrientation as String] = orientation.cgImagePropertyOrientation
 }
 
 
@@ -90,7 +90,7 @@ func writeMetadata(intoImageData imageData: Data?, metadata: NSMutableDictionary
   let source = CGImageSourceCreateWithData(imageData! as CFData, nil)
   
   // this is the type of image (e.g., public.jpeg)
-//  let UTI = CGImageSourceGetType(source!)
+  //  let UTI = CGImageSourceGetType(source!)
   
   // create a new data object and write the new image into it
   let newData = NSMutableData()
@@ -153,4 +153,127 @@ extension Date {
     f.dateFormat = "HH:mm:ss.SSSSSS"
     return f.string(from: self)
   }
+}
+
+extension Data {
+  func addExif(exif: ExifData, gps: GPSData) {
+    let jpeg = self
+    var source: CGImageSource? = nil
+    source = CGImageSourceCreateWithData((jpeg as CFData?)!, nil)
+    let metadata = CGImageSourceCopyPropertiesAtIndex(source!, 0, nil) as? [AnyHashable: Any]
+    let metadataAsMutable = metadata
+    var EXIFDictionary = (metadataAsMutable?[(kCGImagePropertyExifDictionary as String)]) as? [AnyHashable: Any]
+    var GPSDictionary = (metadataAsMutable?[(kCGImagePropertyGPSDictionary as String)]) as? [AnyHashable: Any]
+    
+    if !(EXIFDictionary != nil) {
+      EXIFDictionary = [AnyHashable: Any]()
+    }
+    if !(GPSDictionary != nil) {
+      GPSDictionary = [AnyHashable: Any]()
+    }
+    
+    GPSDictionary![(kCGImagePropertyGPSLatitude as String)] = 30.21313
+    GPSDictionary![(kCGImagePropertyGPSLongitude as String)] = 76.22346
+    EXIFDictionary![(kCGImagePropertyExifUserComment as String)] = "Hello Image"
+    
+    let UTI: CFString = CGImageSourceGetType(source!)!
+    let dest_data = NSMutableData()
+    let destination: CGImageDestination = CGImageDestinationCreateWithData(dest_data as CFMutableData, UTI, 1, nil)!
+    CGImageDestinationAddImageFromSource(destination, source!, 0, (metadataAsMutable as CFDictionary?))
+    CGImageDestinationFinalize(destination)
+  }
+  
+  func setEXIFUserComment(_ comment: String, using sourceURL: URL, destination destinationURL: URL) {
+    
+    guard let imageDestination = CGImageDestinationCreateWithURL(destinationURL as CFURL, kUTTypeJPEG, 1, nil)
+    else { fatalError("Image destination not created") }
+    
+    guard let metadataTag = CGImageMetadataTagCreate(kCGImageMetadataNamespaceExif, kCGImageMetadataPrefixExif, kCGImagePropertyExifUserComment, .string, comment as CFString)
+    else { fatalError("Metadata tag not created") }
+    
+    let metadata = CGImageMetadataCreateMutable()
+    
+    let exifUserCommentPath = "\(kCGImageMetadataPrefixExif):\(kCGImagePropertyExifUserComment)" as CFString
+    CGImageMetadataSetTagWithPath(metadata, nil, exifUserCommentPath, metadataTag)
+    
+    guard let imageSource = CGImageSourceCreateWithURL(sourceURL as CFURL, nil)
+    else { fatalError("Image source not created") }
+    
+    guard let image = CGImageSourceCreateImageAtIndex(imageSource, 0, nil)
+    else { fatalError("Image not created from source") }
+    
+    CGImageDestinationAddImageAndMetadata(imageDestination, image, metadata, nil)
+    CGImageDestinationFinalize(imageDestination)
+  }
+  
+//  func createTempDirectory() -> String? {
+//      let tempDirectoryTemplate = NSTemporaryDirectory().stringByAppendingPathComponent("XXXXX")
+//
+//      let fileManager = NSFileManager.defaultManager()
+//
+//      var err: NSErrorPointer = nil
+//      if fileManager.createDirectoryAtPath(tempDirectoryTemplate, withIntermediateDirectories: true, attributes: nil, error: err) {
+//          return tempDirectoryTemplate
+//      } else {
+//          return nil
+//      }
+//    let stringToSave = "The string I want to save"
+//    let path = FileManager.default.urls(for: .documentDirectory,
+//                                        in: .userDomainMask)[0].appendingPathComponent("myFile")
+//
+//    if let stringData = stringToSave.data(using: .utf8) {
+//        try? stringData.write(to: path)
+//    }
+//  }
+  
+  
+  func setEXIFUserComment2(_ exifData: ExifData, sourceURL: URL, destinationURL: URL) {
+    guard let outputImage = CGImageDestinationCreateWithURL(destinationURL as CFURL, kUTTypeJPEG, 1, nil)
+    else { fatalError("Image destination not created") }
+    
+    guard let imageSource = CGImageSourceCreateWithURL(sourceURL as CFURL, nil)
+    else { fatalError("Image source not created") }
+    
+    guard let exifDictionary: [String: Any] = exifData.encodedDictionary else { return }
+    let exifNSDictionary = exifDictionary as [NSString: AnyObject]
+    let properties: [NSString: AnyObject] = [ kCGImagePropertyExifDictionary: exifNSDictionary as CFDictionary ]
+    
+    CGImageDestinationAddImageFromSource(outputImage, imageSource, 0, properties as CFDictionary)
+    CGImageDestinationFinalize(outputImage)
+  }
+}
+
+public enum ShowError: Error {
+    case exifError(String)
+}
+
+public func copyImageWithExifData(exif: ExifData? = nil, gps: GPSData? = nil, sourceURL: URL, destinationURL: URL) throws {
+  guard let outputImage = CGImageDestinationCreateWithURL(destinationURL as CFURL, kUTTypeJPEG, 1, nil) else {
+    throw ShowError.exifError("Image destination not created")
+  }
+  
+  guard let imageSource = CGImageSourceCreateWithURL(sourceURL as CFURL, nil) else {
+    throw ShowError.exifError("Image source not created")
+  }
+  
+  var properties: [NSString: AnyObject] = [:]
+  
+  if let exifData = exif {
+    guard let exifDictionary: [String: Any] = exifData.encodedDictionary else {
+      throw ShowError.exifError("Dict not encoded")
+    }
+    let exifNSDictionary = exifDictionary as [NSString: AnyObject]
+    properties[kCGImagePropertyExifDictionary] = exifNSDictionary as CFDictionary
+  }
+  
+  if let gpsData = gps {
+    guard let gpsDictionary: [String: Any] = gpsData.encodedDictionary else {
+      throw ShowError.exifError("Dict not encoded")
+    }
+    let gpsNSDictionary = gpsDictionary as [NSString: AnyObject]
+    properties[kCGImagePropertyGPSDictionary] = gpsNSDictionary as CFDictionary
+  }
+  
+  CGImageDestinationAddImageFromSource(outputImage, imageSource, 0, properties as CFDictionary)
+  CGImageDestinationFinalize(outputImage)
 }

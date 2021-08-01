@@ -1,6 +1,6 @@
 import Foundation
 
-public struct ExifData: Codable {
+public struct ExifData: Codable, Equatable {
   public var PixelXDimension: Int?
   public var PixelYDimension: Int?
   public var SubjectArea: [Int]?
@@ -58,4 +58,15 @@ public struct ExifData: Codable {
 public extension ExifData {
   var width: Int? { PixelXDimension }
   var height: Int? { PixelYDimension }
+  
+  static var exampleData: ExifData {
+    var exifData = ExifData()
+    exifData.ApertureValue = 12.0
+    exifData.DateTimeOriginal = Date(timeIntervalSince1970: 12)
+    exifData.Contrast = 4
+    exifData.LensMake = "mimimi"
+    exifData.FocalLength = 23
+    exifData.UserComment = "This is a test!"
+    return exifData
+  }
 }

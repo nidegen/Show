@@ -4,9 +4,11 @@ import AVFoundation.AVCapturePhotoOutput
 extension Dictionary where Key == String, Value: Any {
   func decoded<T: Decodable>() -> T? {
     if let data = try? JSONSerialization.data(withJSONObject: self, options: []) {
+      #if DEBUG
       if let jsonString = String(data: data, encoding: .utf8) {
         print(jsonString)
       }
+      #endif
       do {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .formatted(.exifDateFormatter)
@@ -19,6 +21,18 @@ extension Dictionary where Key == String, Value: Any {
     } else {
       return nil
     }
+  }
+}
+
+extension Encodable {
+  var encodedDictionary: [String: Any]? {
+    (try? JSONSerialization.jsonObject(with: encoded ?? Data(), options: .allowFragments)).flatMap { $0 as? [String: Any] }
+  }
+  
+  var encoded: Data? {
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .formatted(.exifDateFormatter)
+    return try? encoder.encode(self)
   }
 }
 
