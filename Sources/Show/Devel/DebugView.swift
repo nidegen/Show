@@ -7,7 +7,7 @@ struct DebugView: View {
       Spacer()
       VideoView(loader: .tester)
       Spacer()
-      ImageView(id: "test", store: .mock)
+      ImageView(id: "test")
         .padding()
       Spacer()
     }

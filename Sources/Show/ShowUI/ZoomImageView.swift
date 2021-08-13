@@ -9,7 +9,7 @@ public struct ZoomImageView: UIViewRepresentable {
   
   var onTap: (()->())?
   
-  public init(id: Id, imageStore: ImageStore,
+  public init(id: Id, imageStore: ImageStore = (.defaultStore ?? .mock),
               maxZoom: CGFloat = 20,
               minZoom: CGFloat = 1,
               onTap: (()->())? = nil) {

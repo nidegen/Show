@@ -12,7 +12,7 @@ struct WidgetView<Image: ImageDescription>: View {
       ForEach(images) { image in
         ZStack {
           Color.black
-          ImageView(id: image.imageId, store: ImageStore.mock)
+          ImageView(id: image.imageId)
             .frame(width: UIScreen.main.bounds.width, height: 200)
         }
         .clipShape(RoundedRectangle(cornerRadius: 10.0, style: .continuous))
@@ -25,7 +25,7 @@ struct WidgetView<Image: ImageDescription>: View {
   }
 }
 
-struct DemoWidhet: View {
+struct DemoWidget: View {
   @State var state = "B"
   
   var body: some View {
@@ -38,6 +38,6 @@ struct DemoWidhet: View {
 
 struct WidgetView_Previews: PreviewProvider {
   static var previews: some View {
-    DemoWidhet()
+    DemoWidget()
   }
 }

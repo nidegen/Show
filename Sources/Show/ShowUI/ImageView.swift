@@ -1,28 +1,37 @@
 import SwiftUI
 
 public struct ImageView: View {
-  @ObservedObject private var imageLoader: ImageLoader
+  @StateObject private var imageLoader = ImageLoader()
   
-  public var placeholder: AnyView?
+  let store: ImageStore
+  let id: Id?
+  let sizeClass: ImageSizeClass
+  public var placeholder: AnyView? = nil
 
-  public init(id: Id?, sizeClass: ImageSizeClass = .original, store: ImageStore) {
-    imageLoader = ImageLoader(store: store, sizeClass: sizeClass)
-    id.map {
-      imageLoader.load(id: $0)
-    }
+  public init(id: Id?, sizeClass: ImageSizeClass = .original, store: ImageStore = (.defaultStore ?? .mock)) {
+    self.id = id
+    self.store = store
+    self.sizeClass = sizeClass
   }
   
   @ViewBuilder
   public var body: some View {
-    if imageLoader.downloadedImage != nil {
-      SwiftUI.Image(uiImage: imageLoader.downloadedImage!.withRenderingMode(.alwaysOriginal))
-        .resizable()
-        .aspectRatio(contentMode: .fill)
-    } else {
-      if let placeholder = placeholder {
-        placeholder
+    Group {
+      if imageLoader.image != nil {
+        SwiftUI.Image(uiImage: imageLoader.image!.withRenderingMode(.alwaysOriginal))
+          .resizable()
+          .aspectRatio(contentMode: .fill)
       } else {
-        defaultPlaceholder
+        if let placeholder = placeholder {
+          placeholder
+        } else {
+          defaultPlaceholder
+        }
+      }
+    }
+    .onAppear{
+      id.map {
+        imageLoader.load(id: $0, store: store, sizeClass: sizeClass)
       }
     }
   }
@@ -41,12 +50,13 @@ public struct ImageView: View {
         .resizable()
         .aspectRatio(contentMode: .fill)
         .padding()
+        .foregroundColor(.white)
     }
   }
 }
 
 struct ImageView_Previews: PreviewProvider {
   static var previews: some View {
-    ImageView(id: "nbl", store: ImageStore(server: MockServer()))
+    ImageView(id: "nbl")
   }
 }

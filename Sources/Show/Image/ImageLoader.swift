@@ -10,20 +10,16 @@ import Foundation
 import UIKit
 
 class ImageLoader: ObservableObject {
-  @Published var downloadedImage: UIImage?
-  let store: ImageStore
-  let sizeClass: ImageSizeClass
+  @Published var image: UIImage?
   
-  init(store: ImageStore, sizeClass: ImageSizeClass = .original) {
-    self.store = store
-    self.sizeClass = sizeClass
-  }
-  
-  func load(id: Id) {
+  func load(id: Id, store: ImageStore, sizeClass: ImageSizeClass = .original) {
+    
     store.image(forId: id, sizeClass: sizeClass) { image in
-//      DispatchQueue.main.async {
-        self.downloadedImage = image
-//      }
+      if let image = image {
+        self.image = image
+      } else {
+        self.image = store.cache.getImage(forId: id, notLargerThan: sizeClass)
+      }
     }
   }
 }

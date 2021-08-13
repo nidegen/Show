@@ -9,25 +9,19 @@
 import Foundation
 import UIKit
 
-protocol UploadObserver { // Not used yet, will be used for progress tracking
-  func progressUpdate(progress: Float)
-}
-
 public typealias Completion = (Result<Id,Error>) -> ()
 
 public protocol ImageServer {
   func image(forId id: Id, withSize size: ImageSizeClass, completion: @escaping (UIImage?)->())
   
-  @discardableResult
   func uploadNewImage(_ photo: UIImage, id: Id,
                       maxResolution: CGFloat?,
                       compression: CGFloat,
-                      completion: Completion?) -> Id
+                      completion: Completion?) -> UploadTask
   
-  @discardableResult
   func uploadNewImage(fromURL photoURL: URL,
                       id: Id,
-                      completion: Completion?) -> Id
+                      completion: Completion?) -> UploadTask
   
   func deleteImage(withId id: Id)
 }

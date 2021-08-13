@@ -1,14 +1,17 @@
 import Foundation
 import UIKit
 
-public final class ImageStore {
-  public var server: ImageServer
-  public var cache: ImageCache
+public final class ImageStore: ObservableObject {
+  public let server: ImageServer
+  public let cache: ImageCache
+  public let uploadObserver = UploadObserver()
   
   public init(server: ImageServer, cache: ImageCache = ImageCache()) {
     self.server = server
     self.cache = cache
   }
+  
+  public static var defaultStore: ImageStore?
   
   public static var mock = ImageStore(server: MockServer())
   
@@ -62,20 +65,22 @@ public final class ImageStore {
   
   @discardableResult
   public func uploadNewImage(_ photo: UIImage, id: Id = UUID().uuidString,
-                             maxResolution: CGFloat? = nil, compression: CGFloat = 0.5, completion: Completion? = nil) -> Id {
-    server.uploadNewImage(photo, id: id, maxResolution: maxResolution, compression: compression, completion: completion)
+                             maxResolution: CGFloat? = nil, compression: CGFloat = 0.5, completion: Completion? = nil) -> UploadTask {
+    let task = server.uploadNewImage(photo, id: id, maxResolution: maxResolution, compression: compression, completion: completion)
     self.cache.setImage(photo, forId: id)
-    return id
+    self.uploadObserver.add(task: task)
+    return task
   }
   
   
   @discardableResult
-  public func uploadNewImage(fromURL photoURL: URL, id: Id = UUID().uuidString, completion: Completion? = nil) -> Id {
-    server.uploadNewImage(fromURL: photoURL, id: id, completion: completion)
+  public func uploadNewImage(fromURL photoURL: URL, id: Id = UUID().uuidString, completion: Completion? = nil) -> UploadTask {
+    let task = server.uploadNewImage(fromURL: photoURL, id: id, completion: completion)
     UIImage(contentsOfFile: photoURL.path).map {
       self.cache.setImage($0, forId: id)
     }
-    return id
+    self.uploadObserver.add(task: task)
+    return task
   }
   
   public func deleteImage(withId id: Id) {
@@ -83,10 +88,10 @@ public final class ImageStore {
     cache.deleteImage(withId: id)
   }
   
-  public func saveToLibrary(id: Id) {
+  public func saveToLibrary(id: Id, exif: ExifData? = nil, gps: GPSData? = nil) {
     image(forId: id) { optionalImage in
       guard let image = optionalImage else { return }
-      UIImageWriteToSavedPhotosAlbum(image, self, nil, nil)
+      UIImageWriteToSavedPhotosAlbum(image.imageWith(exif: exif, gps: gps), self, nil, nil)
     }
   }
 }

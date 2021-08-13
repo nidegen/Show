@@ -5,9 +5,9 @@ final class ExifTests: XCTestCase {
   func testExif() {
     let imageURL = URL(string: "https://user-images.githubusercontent.com/8779423/111466775-f9d4a580-8723-11eb-8846-7522e41765cd.jpg")!
     let imageData = try! Data(contentsOf: imageURL)
-
+    
     let ciimage = CIImage(data: imageData)!
-
+    
     guard let exif = ciimage.exif else { XCTFail(); return }
 
     XCTAssertEqual(exif.DateTimeDigitized, DateFormatter.exifDateFormatter.date(from: "2021:02:08 13:30:44"))
@@ -21,9 +21,9 @@ final class ExifTests: XCTestCase {
       XCTFail()
       return
     }
-
+    
     let ciimage = CIImage(data: imageData)!
-
+    
     guard let gps = ciimage.gps else { XCTFail(); return }
     XCTAssertEqual(gps.Longitude, 8.7678883333333335)
     XCTAssertEqual(gps.Latitude, 47.009972216666668)
@@ -33,14 +33,14 @@ final class ExifTests: XCTestCase {
     XCTAssertEqual(gps.DestBearingRef, "T")
     XCTAssertEqual(gps.Altitude, 1700.0185840707964)
   }
-
+  
   func testUIImage() {
     let imageURL = URL(string: "https://github.com/ianare/exif-samples/blob/master/jpg/gps/DSCN0038.jpg?raw=true")!
     let imageData = try! Data(contentsOf: imageURL)
     let image = UIImage(data: imageData)!
-
-    let ciimage = CIImage(data: imageData)! // image.jpegData(compressionQuality: 1)!)!
-
+    
+    let ciimage = CIImage(data: imageData)!//image.jpegData(compressionQuality: 1)!)!
+    
     let data = ciimage.exif
     guard let gps = ciimage.gps else { XCTFail(); return }
 
