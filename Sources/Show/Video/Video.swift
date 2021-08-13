@@ -1,8 +1,6 @@
 import UIKit.UIImage
 import Photos
 
-public typealias Id = String
-
 public class Video {
   public let id: Id
   public let localURL: URL

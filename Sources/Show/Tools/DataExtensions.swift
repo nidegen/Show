@@ -48,6 +48,16 @@ public extension CIImage {
   }
 }
 
+public extension Encodable {
+  var jsonData: Data? { try? JSONEncoder().encode(self) }
+
+  var dict: [String: Any] {
+    guard let data = self.jsonData else { return [:] }
+    guard let dict = try? JSONSerialization.jsonObject(with: data, options: .allowFragments)  else { return [:] }
+    return dict as? [String: Any] ?? [:]
+  }
+}
+
 public extension AVCapturePhoto {
   var exifPropertyDictionary: [String: Any]? {
     var dict = metadata["{Exif}"] as? [String: Any]

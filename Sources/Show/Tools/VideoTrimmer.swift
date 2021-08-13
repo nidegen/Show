@@ -51,7 +51,8 @@ class VideoTrimmer {
     guard sourceURL.isFileURL, destinationURL.isFileURL else {
       #warning("should still lower quality?")
       completion(.failure(VideoTrimmer.trimError))
-      return }
+      return
+    }
     
     let options = [
       AVURLAssetPreferPreciseDurationAndTimingKey: true

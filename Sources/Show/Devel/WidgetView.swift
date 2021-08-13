@@ -1,5 +1,4 @@
 import SwiftUI
-import ShowImage
 
 struct WidgetView<Image: ImageDescription>: View {
   var images: [Image]

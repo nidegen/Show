@@ -40,6 +40,19 @@ public enum ImageSizeClass: String, CaseIterable {
     }
   }
   
+  public var nextSmaller: ImageSizeClass {
+    switch self {
+    case .thumbnailSquared:
+      return .thumbnailSquared
+    case .thumbnail:
+      return .thumbnailSquared
+    case .large:
+      return .thumbnail
+    case .original:
+      return .large
+    }
+  }
+  
   public static func sizeClass(for imageSize: CGFloat) -> Self {
     var sizeClass = Self.original
     for tmp in ImageSizeClass.allCases {

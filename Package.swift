@@ -13,29 +13,16 @@ let package = Package(
   products: [
     .library(
       name: "Show",
-      targets: ["Show", "ShowImage", "ShowVideo", "Tools"]),
+      targets: ["Show"]),
   ],
   dependencies: [
     // .package(url: /* package url */, from: "1.0.0"),
   ],
   targets: [
     .target(
-      name: "Show",
-      dependencies: ["ShowImage", "ShowVideo", "Tools"]),
-    .target(
-      name: "ShowImage",
-      dependencies: ["Tools"]),
-    .target(
-      name: "ShowVideo",
-      dependencies: []),
-    .target(
-      name: "Tools",
-      dependencies: []),
+      name: "Show"),
     .testTarget(
       name: "ShowTests",
       dependencies: ["Show"]),
-    .testTarget(
-      name: "ToolsTests",
-      dependencies: ["Tools"]),
   ]
 )
