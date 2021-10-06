@@ -9,10 +9,15 @@ final class ExifTests: XCTestCase {
     let ciimage = CIImage(data: imageData)!
 
     guard let exif = ciimage.exif else { XCTFail(); return }
-
+    
     XCTAssertEqual(exif.DateTimeDigitized, DateFormatter.exifDateFormatter.date(from: "2021:02:08 13:30:44"))
+    XCTAssertEqual(exif.DateTimeOriginal, DateFormatter.exifDateFormatter.date(from: "2021:02:08 13:30:44"))
     XCTAssertEqual(exif.LensModel, "iPhone 7 back camera 3.99mm f/1.8")
     XCTAssertEqual(exif.LensMake, "Apple")
+    XCTAssertEqual(exif.FocalLength, 3.99)
+    XCTAssertEqual(exif.ApertureValue, 1.6959938128383605)
+    XCTAssertEqual(exif.Flash, 16)
+    XCTAssertEqual(exif.Orientation, nil)
   }
   
   func testGPS() {
