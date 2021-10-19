@@ -5,8 +5,6 @@ struct DebugView: View {
   var body: some View {
     VStack {
       Spacer()
-      VideoView(loader: .tester)
-      Spacer()
       ImageView(id: "test", store: .mock)
         .padding()
       Spacer()
