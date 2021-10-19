@@ -22,19 +22,19 @@ public final class ImageStore {
       if sizeClass != .original,
          let largerImage = cache.getImage(forId: id, largerThan: sizeClass.nextLarger),
          var resized = largerImage.resize(clampingMin: sizeClass.maxSmallerResolution) {
-          if sizeClass == .thumbnailSquared,
-             let sq = resized.squared() {
-            resized = sq
-          }
-          cache.setImage(resized, forId: id, size: sizeClass)
-          completion(resized)
+        if sizeClass == .thumbnailSquared,
+           let sq = resized.squared() {
+          resized = sq
+        }
+        cache.setImage(resized, forId: id, size: sizeClass)
+        completion(resized)
       } else {
         server.image(forId: id, withSize: sizeClass) { image in
           var img = image
           if sizeClass != .original {
             img = image?.resize(clampingMin: sizeClass.maxSmallerResolution)
             if sizeClass == .thumbnailSquared,
-              let sq = image?.squared() {
+               let sq = image?.squared() {
               img = sq
             }
           }
@@ -51,7 +51,7 @@ public final class ImageStore {
     let group = DispatchGroup()
     var images = [UIImage]()
     for id in ids {
-        group.enter()
+      group.enter()
       self.image(forId: id, sizeClass: sizeClass) { image in
         image.map { images.append($0) }
         group.leave()

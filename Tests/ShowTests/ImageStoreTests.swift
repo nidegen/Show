@@ -12,28 +12,29 @@ final class ImageStoreTests: XCTestCase {
   }
   
   func testStore() {
+    var expectations: [XCTestExpectation] = []
     for size in ImageSizeClass.allCases {
-      testSizeClass(sizeClass: size)
+      expectations += [testSizeClass(sizeClass: size)]
     }
+    wait(for: expectations, timeout: 2.0)
     for size in ImageSizeClass.allCases {
       testSizeClassCached(sizeClass: size)
     }
   }
   
   func testSizeClassCached(sizeClass: ImageSizeClass) {
-    guard let img = store.cache.getImage(forId: "test", ofSize: sizeClass) else { XCTFail(); return }
-    print(img.maxSize)
-    XCTAssert(img.maxSize <= sizeClass.maxSmallerResolution);
+    guard let img = store.cache.getImage(forId: "test", ofSize: sizeClass) else { return }
+    XCTAssertLessThanOrEqual(img.minSize, sizeClass.maxSmallerResolution)
   }
   
-  func testSizeClass(sizeClass: ImageSizeClass) {
+  func testSizeClass(sizeClass: ImageSizeClass) -> XCTestExpectation {
     let expectation = XCTestExpectation(description: "Test image getter for \(sizeClass.rawValue)")
     store.image(forId: "test", sizeClass: sizeClass) { image in
-      guard let image = image else { XCTFail(); return }
-      print(image.maxSize)
-      XCTAssert(image.maxSize <= sizeClass.maxSmallerResolution);
+      if let image = image {
+        XCTAssertLessThanOrEqual(image.minSize, sizeClass.maxSmallerResolution)
+      }
       expectation.fulfill()
     }
-    wait(for: [expectation], timeout: 3.0)
+    return expectation
   }
 }
