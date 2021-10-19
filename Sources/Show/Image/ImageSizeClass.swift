@@ -12,18 +12,20 @@ import CoreGraphics
 public typealias Id = String
 
 public enum ImageSizeClass: String, CaseIterable {
-  case original, thumbnail, large, thumbnailSquared
+  case original, thumbnail, preview, large, thumbnailSquared
   
-  public var maxSize: CGFloat {
+  public var maxSmallerResolution: CGFloat {
     switch self {
     case .thumbnailSquared:
-      return ImageSizeClass.thumbnail.maxSize;
+      return 200;
     case .thumbnail:
-      return 200
+      return 180
+    case .preview:
+      return 720
     case .large:
-      return 1024
+      return 2048
     case .original:
-      return 8192
+      return .infinity
     }
   }
   
@@ -32,6 +34,8 @@ public enum ImageSizeClass: String, CaseIterable {
     case .thumbnailSquared:
       return .thumbnail
     case .thumbnail:
+      return .preview
+    case .preview:
       return .large
     case .large:
       return .original
@@ -46,20 +50,12 @@ public enum ImageSizeClass: String, CaseIterable {
       return .thumbnailSquared
     case .thumbnail:
       return .thumbnailSquared
-    case .large:
+    case .preview:
       return .thumbnail
+    case .large:
+      return .preview
     case .original:
       return .large
     }
-  }
-  
-  public static func sizeClass(for imageSize: CGFloat) -> Self {
-    var sizeClass = Self.original
-    for tmp in ImageSizeClass.allCases {
-      if tmp.maxSize > imageSize, tmp.maxSize < sizeClass.maxSize {
-        sizeClass = tmp
-      }
-    }
-    return sizeClass
   }
 }

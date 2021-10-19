@@ -42,9 +42,8 @@ final class ExifTests: XCTestCase {
   func testUIImage() {
     let imageURL = URL(string: "https://github.com/ianare/exif-samples/blob/master/jpg/gps/DSCN0038.jpg?raw=true")!
     let imageData = try! Data(contentsOf: imageURL)
-    let image = UIImage(data: imageData)!
 
-    let ciimage = CIImage(data: imageData)! // image.jpegData(compressionQuality: 1)!)!
+    let ciimage = CIImage(data: imageData)!
 
     let data = ciimage.exif
     guard let gps = ciimage.gps else { XCTFail(); return }

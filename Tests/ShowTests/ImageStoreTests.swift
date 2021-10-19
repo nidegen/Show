@@ -23,7 +23,7 @@ final class ImageStoreTests: XCTestCase {
   func testSizeClassCached(sizeClass: ImageSizeClass) {
     guard let img = store.cache.getImage(forId: "test", ofSize: sizeClass) else { XCTFail(); return }
     print(img.maxSize)
-    XCTAssert(img.maxSize <= sizeClass.maxSize);
+    XCTAssert(img.maxSize <= sizeClass.maxSmallerResolution);
   }
   
   func testSizeClass(sizeClass: ImageSizeClass) {
@@ -31,7 +31,7 @@ final class ImageStoreTests: XCTestCase {
     store.image(forId: "test", sizeClass: sizeClass) { image in
       guard let image = image else { XCTFail(); return }
       print(image.maxSize)
-      XCTAssert(image.maxSize <= sizeClass.maxSize);
+      XCTAssert(image.maxSize <= sizeClass.maxSmallerResolution);
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 3.0)

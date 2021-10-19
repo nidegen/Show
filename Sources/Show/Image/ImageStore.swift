@@ -21,7 +21,7 @@ public final class ImageStore {
     DispatchQueue.main.async { [self] in
       if sizeClass != .original,
          let largerImage = cache.getImage(forId: id, largerThan: sizeClass.nextLarger),
-         var resized = largerImage.resize(clampingMin: sizeClass.maxSize) {
+         var resized = largerImage.resize(clampingMin: sizeClass.maxSmallerResolution) {
           if sizeClass == .thumbnailSquared,
              let sq = resized.squared() {
             resized = sq
@@ -32,7 +32,7 @@ public final class ImageStore {
         server.image(forId: id, withSize: sizeClass) { image in
           var img = image
           if sizeClass != .original {
-            img = image?.resized(toMax: sizeClass.maxSize)
+            img = image?.resize(clampingMin: sizeClass.maxSmallerResolution)
             if sizeClass == .thumbnailSquared,
               let sq = image?.squared() {
               img = sq
