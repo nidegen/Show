@@ -1,17 +1,10 @@
-//
-//  ImageSizeClass.swift
-//  Echo
-//
-//  Created by Nicolas Degen on 19.09.20.
-//  Copyright © 2020 Echo Labs AG. All rights reserved.
-//
-
 import Foundation
 import CoreGraphics
 
 public typealias Id = String
+public typealias ImageSizeClass = ImageFormat
 
-public enum ImageSizeClass: String, CaseIterable {
+public enum ImageFormat: String, CaseIterable {
   case original, thumbnail, preview, large, thumbnailSquared
   
   public var maxSmallerResolution: CGFloat {
