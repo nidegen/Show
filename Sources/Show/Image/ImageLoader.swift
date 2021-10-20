@@ -12,15 +12,15 @@ import UIKit
 class ImageLoader: ObservableObject {
   @Published var downloadedImage: UIImage?
   let store: ImageStore
-  let sizeClass: ImageSizeClass
+  let format: ImageFormat
   
-  init(store: ImageStore, sizeClass: ImageSizeClass = .original) {
+  init(store: ImageStore, format: ImageFormat = .original) {
     self.store = store
-    self.sizeClass = sizeClass
+    self.format = format
   }
   
   func load(id: Id) {
-    store.image(forId: id, sizeClass: sizeClass) { image in
+    store.image(forId: id, format: format) { image in
 //      DispatchQueue.main.async {
         self.downloadedImage = image
 //      }

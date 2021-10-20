@@ -31,15 +31,15 @@ public class ImageCache {
   }
   
   @discardableResult
-  public func getImages(ids: [Id], ofSize sizeClass: ImageSizeClass = .original) -> [UIImage] {
-    ids.compactMap { id in getImage(forId: id, ofSize: sizeClass) }
+  public func getImages(ids: [Id], format: ImageFormat = .original) -> [UIImage] {
+    ids.compactMap { id in getImage(forId: id, format: format) }
   }
   
-  public func getImage(forId id: Id, ofSize sizeClass: ImageSizeClass = .original) -> UIImage? {
-    if let cachedVersion = cache.object(forKey: (id + sizeClass.rawValue) as NSString) {
+  public func getImage(forId id: Id, format: ImageFormat = .original) -> UIImage? {
+    if let cachedVersion = cache.object(forKey: (id + format.rawValue) as NSString) {
         return cachedVersion
     }
-    guard let url = fileManager.cachedImageUrl(forId: id, ofSize: sizeClass) else { return nil }
+    guard let url = fileManager.cachedImageUrl(forId: id, format: format) else { return nil }
     let pngUrl = url.appendingPathExtension("png")
     let jpgUrl = url.appendingPathExtension("jpg")
     var image: UIImage?
@@ -49,28 +49,28 @@ public class ImageCache {
       image = UIImage(contentsOfFile: jpgUrl.path)
     }
     image.map {
-      cache.setObject($0, forKey: (id + sizeClass.rawValue) as NSString)
+      cache.setObject($0, forKey: (id + format.rawValue) as NSString)
     }
     return image
   }
   
-  public func getImage(forId id: Id, notLargerThan maximumSize: ImageSizeClass) -> UIImage? {
-    if maximumSize == .thumbnailSquared {
-      return getImage(forId: id, ofSize: .thumbnailSquared)
+  public func getImage(forId id: Id, notLargerThan maximumFormat: ImageFormat) -> UIImage? {
+    if maximumFormat == .thumbnailSquared {
+      return getImage(forId: id, format: .thumbnailSquared)
     }
-    return getImage(forId: id, ofSize: maximumSize) ?? getImage(forId: id, largerThan: maximumSize.nextSmaller)
+    return getImage(forId: id, format: maximumFormat) ?? getImage(forId: id, largerThan: maximumFormat.nextSmaller)
   }
   
-  public func getImage(forId id: Id, largerThan minimumSize: ImageSizeClass) -> UIImage? {
-    if minimumSize == .original {
-      return getImage(forId: id, ofSize: .original)
+  public func getImage(forId id: Id, largerThan minimumFormat: ImageFormat) -> UIImage? {
+    if minimumFormat == .original {
+      return getImage(forId: id, format: .original)
     }
-    return getImage(forId: id, ofSize: minimumSize) ?? getImage(forId: id, largerThan: minimumSize.nextLarger)
+    return getImage(forId: id, format: minimumFormat) ?? getImage(forId: id, largerThan: minimumFormat.nextLarger)
   }
   
-  public func setImage(_ image: UIImage, forId id: Id, size: ImageSizeClass = .original) {
-    cache.setObject(image, forKey: (id + size.rawValue) as NSString)
-    guard var url = self.fileManager.cachedImageUrl(forId: id, ofSize: size) else { return }
+  public func setImage(_ image: UIImage, forId id: Id, format: ImageFormat = .original) {
+    cache.setObject(image, forKey: (id + format.rawValue) as NSString)
+    guard var url = self.fileManager.cachedImageUrl(forId: id, format: format) else { return }
     url.appendPathExtension("jpg")
     do {
       try fileManager.createDirectory(atPath: url.deletingLastPathComponent().path, withIntermediateDirectories: true, attributes: nil)
@@ -80,11 +80,11 @@ public class ImageCache {
     }
   }
   
-  public func setImage(_ imageData: Data, forId id: Id, size: ImageSizeClass = .original) {
+  public func setImage(_ imageData: Data, forId id: Id, format: ImageFormat = .original) {
     if let image = UIImage(data: imageData) {
-      cache.setObject(image, forKey: (id + size.rawValue) as NSString)
+      cache.setObject(image, forKey: (id + format.rawValue) as NSString)
     }
-    guard var url = self.fileManager.cachedImageUrl(forId: id, ofSize: size) else { return }
+    guard var url = self.fileManager.cachedImageUrl(forId: id, format: format) else { return }
     url.appendPathExtension(imageData.imageFormat?.rawValue ?? "jpg")
     
     do {
@@ -112,8 +112,8 @@ extension FileManager {
     baseImageCacheUrl?.appendingPathComponent(id, isDirectory: true)
   }
   
-  func cachedImageUrl(forId id: Id, ofSize size: ImageSizeClass = .original) -> URL? {
-    cachedImageDirUrl(forId: id)?.appendingPathComponent(size.rawValue)
+  func cachedImageUrl(forId id: Id, format format: ImageFormat = .original) -> URL? {
+    cachedImageDirUrl(forId: id)?.appendingPathComponent(format.rawValue)
   }
 }
 
@@ -124,28 +124,28 @@ enum ImageHeaderData: UInt8 {
   case tiff01 = 0x49
   case tiff02 = 0x4D
   
-  var imageFormat: ImageFormat {
+  var imageFormat: ImageFileFormat {
     switch self {
     case .jpeg:
-      return ImageFormat.jpeg
+      return ImageFileFormat.jpeg
     case .png:
-      return ImageFormat.png
+      return ImageFileFormat.png
     case .gif:
-      return ImageFormat.gif
+      return ImageFileFormat.gif
     case .tiff01:
-      return ImageFormat.tiff
+      return ImageFileFormat.tiff
     case .tiff02:
-      return ImageFormat.tiff
+      return ImageFileFormat.tiff
     }
   }
 }
 
-enum ImageFormat: String {
+enum ImageFileFormat: String {
   case png, jpeg, gif, tiff
 }
 
 extension Data {
-  var imageFormat: ImageFormat? {
+  var imageFormat: ImageFileFormat? {
     var buffer = [UInt8](repeating: 0, count: 1)
     let nsData = self as NSData
     nsData.getBytes(&buffer, range: NSRange(location: 0,length: 1))
