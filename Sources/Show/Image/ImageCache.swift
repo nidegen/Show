@@ -37,7 +37,7 @@ public class ImageCache {
   
   public func getMemoryCached(_ request: ImageRequest) -> UIImage? {
     for format in request.formats {
-      if let cachedVersion = cache.object(forKey: (id + format.rawValue) as NSString) {
+      if let cachedVersion = cache.object(forKey: (request.imageId + format.rawValue) as NSString) {
         return cachedVersion
       }
     }
