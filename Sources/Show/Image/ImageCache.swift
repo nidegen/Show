@@ -35,6 +35,15 @@ public class ImageCache {
     ids.compactMap { id in getImage(forId: id, format: format) }
   }
   
+  public func getMemoryCached(_ request: ImageRequest) -> UIImage? {
+    for format in request.formats {
+      if let cachedVersion = cache.object(forKey: (id + format.rawValue) as NSString) {
+        return cachedVersion
+      }
+    }
+    return nil
+  }
+  
   public func getImage(forId id: Id, format: ImageFormat = .original) -> UIImage? {
     if let cachedVersion = cache.object(forKey: (id + format.rawValue) as NSString) {
         return cachedVersion
@@ -112,7 +121,7 @@ extension FileManager {
     baseImageCacheUrl?.appendingPathComponent(id, isDirectory: true)
   }
   
-  func cachedImageUrl(forId id: Id, format format: ImageFormat = .original) -> URL? {
+  func cachedImageUrl(forId id: Id, format: ImageFormat = .original) -> URL? {
     cachedImageDirUrl(forId: id)?.appendingPathComponent(format.rawValue)
   }
 }
