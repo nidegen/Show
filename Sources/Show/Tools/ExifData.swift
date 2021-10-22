@@ -40,7 +40,7 @@ public struct ExifData: Codable {
   public var ComponentsConfiguration: [Int]?
   public var ExifVersion: [Int]?
   
-  public var DigitalZoomRatio: Int?
+  public var DigitalZoomRatio: Double?
   public var FileSource: Int?
   public var Contrast: Int?
   public var GainControl: Int?
