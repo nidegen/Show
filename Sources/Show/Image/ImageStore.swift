@@ -18,31 +18,25 @@ public final class ImageStore {
       completion(cachedImage)
       return
     }
-    DispatchQueue.main.async { [self] in
-      if format != .original,
-         let largerImage = cache.getImage(forId: id, largerThan: format.nextLarger),
-         var resized = largerImage.resize(clampingMin: format.maxSmallerResolution) {
-        if format == .thumbnailSquared,
-           let sq = resized.squared() {
-          resized = sq
-        }
-        cache.setImage(resized, forId: id, format: format)
-        completion(resized)
-      } else {
-        server.image(forId: id, format: format) { image in
-          var img = image
-          if format != .original {
-            img = image?.resize(clampingMin: format.maxSmallerResolution)
-            if format == .thumbnailSquared,
-               let sq = image?.squared() {
-              img = sq
+    
+    server.image(forId: id, format: format) { image in
+      if image == nil && format != .original {
+        self.server.image(forId: id, format: .original) { image in
+          if let image = image {
+            if var resized = image.resize(clampingMin: format.maxSmallerResolution) {
+              if format == .thumbnailSquared {
+                resized = resized.squared() ?? resized
+              }
+              self.cache.setImage(resized, forId: id, format: format)
+              completion(resized)
             }
           }
-          img.map {
-            cache.setImage($0, forId: id, format: format)
-          }
-          completion(img)
         }
+      } else {
+        image.map {
+          self.cache.setImage($0, forId: id, format: format)
+        }
+        completion(image)
       }
     }
   }

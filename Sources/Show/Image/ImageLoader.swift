@@ -14,16 +14,14 @@ class ImageLoader: ObservableObject {
   let store: ImageStore
   let format: ImageFormat
   
-  init(store: ImageStore, format: ImageFormat = .original) {
+  init(store: ImageStore, format: ImageFormat = .preview) {
     self.store = store
     self.format = format
   }
   
   func load(id: Id) {
     store.image(forId: id, format: format) { image in
-//      DispatchQueue.main.async {
-        self.downloadedImage = image
-//      }
+      self.downloadedImage = image
     }
   }
 }

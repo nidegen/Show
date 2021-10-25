@@ -7,6 +7,21 @@ public typealias ImageSizeClass = ImageFormat
 public enum ImageFormat: String, CaseIterable {
   case original, thumbnail, preview, large, thumbnailSquared
   
+  public var name: String {
+      switch self {
+      case .thumbnailSquared:
+        return "thumbnail_squared"
+      case .thumbnail:
+        return "thumbnail"
+      case .preview:
+        return "preview"
+      case .large:
+        return "large"
+      case .original:
+        return "original"
+      }
+  }
+  
   public var maxSmallerResolution: CGFloat {
     switch self {
     case .thumbnailSquared:
