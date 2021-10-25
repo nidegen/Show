@@ -12,7 +12,7 @@ public final class ImageStore {
   
   public static var mock = ImageStore(server: MockServer())
   
-  public func image(forId id: Id, format: ImageFormat = .original, completion: @escaping (UIImage?)->()) {
+  public func image(forId id: Id, format: ImageFormat = .preview, completion: @escaping (UIImage?)->()) {
     
     if let cachedImage = cache.getImage(forId: id, format: format) {
       completion(cachedImage)
