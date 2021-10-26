@@ -23,7 +23,7 @@ class MockServer: ImageServer {
     return id
   }
   
-  func image(forId id: Id, withSize size: ImageSizeClass, completion: @escaping (UIImage?) -> ()) {
+  func image(forId id: Id, format: ImageFormat, completion: @escaping (UIImage?) -> ()) {
     if let image = store[id] {
       completion(image)
     } else {

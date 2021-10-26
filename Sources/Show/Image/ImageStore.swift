@@ -12,47 +12,41 @@ public final class ImageStore {
   
   public static var mock = ImageStore(server: MockServer())
   
-  public func image(forId id: Id, sizeClass: ImageSizeClass = .original, completion: @escaping (UIImage?)->()) {
+  public func image(forId id: Id, format: ImageFormat = .preview, completion: @escaping (UIImage?)->()) {
     
-    if let cachedImage = cache.getImage(forId: id, ofSize: sizeClass) {
+    if let cachedImage = cache.getImage(forId: id, format: format) {
       completion(cachedImage)
       return
     }
-    DispatchQueue.main.async { [self] in
-      if sizeClass != .original,
-         let largerImage = cache.getImage(forId: id, largerThan: sizeClass.nextLarger),
-         var resized = largerImage.resize(clampingMin: sizeClass.maxSmallerResolution) {
-        if sizeClass == .thumbnailSquared,
-           let sq = resized.squared() {
-          resized = sq
-        }
-        cache.setImage(resized, forId: id, size: sizeClass)
-        completion(resized)
-      } else {
-        server.image(forId: id, withSize: sizeClass) { image in
-          var img = image
-          if sizeClass != .original {
-            img = image?.resize(clampingMin: sizeClass.maxSmallerResolution)
-            if sizeClass == .thumbnailSquared,
-               let sq = image?.squared() {
-              img = sq
+    
+    server.image(forId: id, format: format) { image in
+      if image == nil && format != .original {
+        self.server.image(forId: id, format: .original) { image in
+          if let image = image {
+            if var resized = image.resize(clampingMin: format.maxSmallerResolution) {
+              if format == .thumbnailSquared {
+                resized = resized.squared() ?? resized
+              }
+              self.cache.setImage(resized, forId: id, format: format)
+              completion(resized)
             }
           }
-          img.map {
-            cache.setImage($0, forId: id, size: sizeClass)
-          }
-          completion(img)
         }
+      } else {
+        image.map {
+          self.cache.setImage($0, forId: id, format: format)
+        }
+        completion(image)
       }
     }
   }
   
-  public func getImages(ids: [Id], ofSize sizeClass: ImageSizeClass = .original, completion: (([UIImage]) -> ())? = nil) {
+  public func getImages(ids: [Id], ofSize format: ImageFormat = .original, completion: (([UIImage]) -> ())? = nil) {
     let group = DispatchGroup()
     var images = [UIImage]()
     for id in ids {
       group.enter()
-      self.image(forId: id, sizeClass: sizeClass) { image in
+      self.image(forId: id, format: format) { image in
         image.map { images.append($0) }
         group.leave()
       }

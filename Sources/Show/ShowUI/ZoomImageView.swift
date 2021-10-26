@@ -103,6 +103,7 @@ public struct ZoomImageView: UIViewRepresentable {
     }
     
     @IBAction func handleDoubleTap(recognizer:  UITapGestureRecognizer) {
+      #warning("Load original image when zooming")
       guard  let scrollView = scrollView else {
         return
       }

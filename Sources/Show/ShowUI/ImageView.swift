@@ -5,8 +5,8 @@ public struct ImageView: View {
   
   public var placeholder: AnyView?
 
-  public init(id: Id?, sizeClass: ImageSizeClass = .original, store: ImageStore) {
-    imageLoader = ImageLoader(store: store, sizeClass: sizeClass)
+  public init(id: Id?, format: ImageFormat = .preview, store: ImageStore) {
+    imageLoader = ImageLoader(store: store, format: format)
     id.map {
       imageLoader.load(id: $0)
     }
@@ -39,7 +39,7 @@ public struct ImageView: View {
       Color.black
       SwiftUI.Image(systemName: "photo")
         .resizable()
-        .aspectRatio(contentMode: .fill)
+        .aspectRatio(contentMode: .fit)
         .padding()
     }
   }

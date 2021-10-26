@@ -13,25 +13,25 @@ final class ImageStoreTests: XCTestCase {
   
   func testStore() {
     var expectations: [XCTestExpectation] = []
-    for size in ImageSizeClass.allCases {
-      expectations += [testSizeClass(sizeClass: size)]
+    for format in ImageFormat.allCases {
+      expectations += [testImageFormat(format: format)]
     }
     wait(for: expectations, timeout: 2.0)
-    for size in ImageSizeClass.allCases {
-      testSizeClassCached(sizeClass: size)
+    for format in ImageFormat.allCases {
+      testFormatCached(format: format)
     }
   }
   
-  func testSizeClassCached(sizeClass: ImageSizeClass) {
-    guard let img = store.cache.getImage(forId: "test", ofSize: sizeClass) else { return }
-    XCTAssertLessThanOrEqual(img.minSize, sizeClass.maxSmallerResolution)
+  func testFormatCached(format: ImageFormat) {
+    guard let img = store.cache.getImage(forId: "test", format: format) else { return }
+    XCTAssertLessThanOrEqual(img.minSize, format.maxSmallerResolution)
   }
   
-  func testSizeClass(sizeClass: ImageSizeClass) -> XCTestExpectation {
-    let expectation = XCTestExpectation(description: "Test image getter for \(sizeClass.rawValue)")
-    store.image(forId: "test", sizeClass: sizeClass) { image in
+  func testImageFormat(format: ImageFormat) -> XCTestExpectation {
+    let expectation = XCTestExpectation(description: "Test image getter for \(format.rawValue)")
+    store.image(forId: "test", format: format) { image in
       if let image = image {
-        XCTAssertLessThanOrEqual(image.minSize, sizeClass.maxSmallerResolution)
+        XCTAssertLessThanOrEqual(image.minSize, format.maxSmallerResolution)
       }
       expectation.fulfill()
     }
