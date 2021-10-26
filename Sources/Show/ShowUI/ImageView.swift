@@ -36,11 +36,13 @@ public struct ImageView: View {
   
   var defaultPlaceholder: some View {
     ZStack {
-      Color.black
+      Color.gray
       SwiftUI.Image(systemName: "photo")
         .resizable()
         .aspectRatio(contentMode: .fit)
         .padding()
+        .foregroundColor(.white)
+      ProgressView()
     }
   }
 }
