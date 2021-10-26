@@ -3,7 +3,7 @@ import SwiftUI
 public struct ZoomImageView: UIViewRepresentable {
   var id: Id
   var store: ImageStore
-  
+  var initialFormat: ImageFormat
   var maxZoom: CGFloat
   var minZoom: CGFloat
   
@@ -12,9 +12,11 @@ public struct ZoomImageView: UIViewRepresentable {
   public init(id: Id, imageStore: ImageStore,
               maxZoom: CGFloat = 20,
               minZoom: CGFloat = 1,
+              initialFormat: ImageFormat = .preview,
               onTap: (()->())? = nil) {
     self.id = id
     store = imageStore
+    self.initialFormat = initialFormat
     self.maxZoom = maxZoom
     self.minZoom = minZoom
     self.onTap = onTap
@@ -51,7 +53,7 @@ public struct ZoomImageView: UIViewRepresentable {
   }
   
   public func makeCoordinator() -> Coordinator {
-    return Coordinator(image: id, imageStore: store, maxZoom: maxZoom, minZoom: minZoom, onTap: onTap)
+    return Coordinator(image: id, imageStore: store, format: initialFormat, maxZoom: maxZoom, minZoom: minZoom, onTap: onTap)
   }
   
   public func updateUIView(_ uiView: UIScrollView, context: Context) {
@@ -67,13 +69,13 @@ public struct ZoomImageView: UIViewRepresentable {
     weak var scrollView: UIScrollView?
     
     var onTap: (()->())?
-
+    var currentFormat: ImageFormat
     let imageStore: ImageStore
     var id: Id {
       didSet {
         self.imageView.image = nil
         
-        imageStore.image(forId: id) { image in
+        imageStore.image(forId: id, format: currentFormat) { image in
           self.imageView.image = image
         }
       }
@@ -83,10 +85,12 @@ public struct ZoomImageView: UIViewRepresentable {
     var minZoom: CGFloat
     
     init(image id: Id, imageStore: ImageStore,
+         format: ImageFormat,
          maxZoom: CGFloat, minZoom: CGFloat,
          onTap: (()->())? = nil) {
       self.maxZoom = maxZoom
       self.minZoom = minZoom
+      self.currentFormat = format
       self.imageStore = imageStore
       self.onTap = onTap
       self.id = id
@@ -103,7 +107,6 @@ public struct ZoomImageView: UIViewRepresentable {
     }
     
     @IBAction func handleDoubleTap(recognizer:  UITapGestureRecognizer) {
-      #warning("Load original image when zooming")
       guard  let scrollView = scrollView else {
         return
       }
@@ -125,10 +128,22 @@ public struct ZoomImageView: UIViewRepresentable {
       zoomRect.origin.y = newCenter.y - ((zoomRect.size.height / 2.0));
       return zoomRect;
     }
-
+    
+    public func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
+      loadOriginalImage()
+    }
     
     public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
       return imageView
+    }
+    
+    func loadOriginalImage() {
+      if currentFormat != .original {
+        self.currentFormat = .original
+        imageStore.image(forId: id, format: .original) { original in
+          self.imageView.image = original
+        }
+      }
     }
   }
 }

@@ -15,7 +15,7 @@ struct ContentView: View {
   
   var body: some View {
     VStack {
-      GalleryView(images: ["gear", "person", "swift"], currentImage: $image, store: .mock)
+//      GalleryView(images: ["gear", "person", "swift"], currentImage: $image, store: .mock)
       Text(image)
       ZoomImageView(id: image, imageStore: .mock) {
         image = options[Int.random(in: 0...2)]
