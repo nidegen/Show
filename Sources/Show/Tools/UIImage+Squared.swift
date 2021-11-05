@@ -1,8 +1,14 @@
 import UIKit
 
+extension UIImage.Orientation {
+  var changingspectRatio: Bool {
+    self == .left || self == .leftMirrored || self == .right || self == .rightMirrored
+  }
+}
+
 extension UIImage {
-  var isPortrait: Bool { size.height > size.width }
-  var isLandscape: Bool { size.width > size.height }
+  var isPortrait: Bool { size.height > size.width && !imageOrientation.changingspectRatio }
+  var isLandscape: Bool { size.width > size.height && !imageOrientation.changingspectRatio }
   var breadth: CGFloat { min(size.width, size.height) }
   var breadthSize: CGSize { .init(width: breadth, height: breadth) }
 
