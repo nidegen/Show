@@ -1,5 +1,4 @@
 import XCTest
-import UIKit
 @testable import Show
 
 final class ImageStoreTests: XCTestCase {

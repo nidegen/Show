@@ -1,4 +1,5 @@
-import UIKit.UIImage
+#if canImport(UIKit)
+import UIKit
 
 public extension UIImage {
   var maxSize: CGFloat {
@@ -8,7 +9,7 @@ public extension UIImage {
   var minSize: CGFloat {
     min(size.width, size.height)
   }
-
+  
   func resized(withPercentage percentage: CGFloat, isOpaque: Bool = true) -> UIImage? {
     let canvas = CGSize(width: size.width * percentage, height: size.height * percentage)
     let format = imageRendererFormat
@@ -75,3 +76,5 @@ public extension UIImage {
     }
   }
 }
+
+#endif

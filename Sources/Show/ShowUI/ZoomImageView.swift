@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import SwiftUI
 
 public struct ZoomImageView: UIViewRepresentable {
@@ -147,3 +148,5 @@ public struct ZoomImageView: UIViewRepresentable {
     }
   }
 }
+
+#endif

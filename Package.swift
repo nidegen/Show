@@ -7,7 +7,7 @@ let package = Package(
   name: "Show",
   
   platforms: [
-    .iOS(.v14),
+    .iOS(.v14), .macOS(.v11)
   ],
   
   products: [

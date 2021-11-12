@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import UIKit
 
 public class ImageCache {
   private let fileManager = FileManager.default

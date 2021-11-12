@@ -6,6 +6,7 @@
 //  Copyright © 2019 Echo Labs AG. All rights reserved.
 //
 
+#if canImport(UIKit)
 import CoreLocation
 import CoreMedia
 import CoreMotion
@@ -151,3 +152,5 @@ extension Date {
     return f.string(from: self)
   }
 }
+
+#endif

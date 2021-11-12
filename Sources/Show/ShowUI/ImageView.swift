@@ -14,10 +14,16 @@ public struct ImageView: View {
   
   @ViewBuilder
   public var body: some View {
-    if imageLoader.downloadedImage != nil {
-      SwiftUI.Image(uiImage: imageLoader.downloadedImage!.withRenderingMode(.alwaysOriginal))
+    if let image = imageLoader.downloadedImage {
+      #if os(iOS)
+      SwiftUI.Image(uiImage: image.withRenderingMode(.alwaysOriginal))
         .resizable()
         .aspectRatio(contentMode: .fill)
+      #else
+      SwiftUI.Image(uiImage: image)
+        .resizable()
+        .aspectRatio(contentMode: .fill)
+      #endif
     } else {
       if let placeholder = placeholder {
         placeholder

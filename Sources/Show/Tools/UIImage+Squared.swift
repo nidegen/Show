@@ -1,5 +1,4 @@
-import UIKit
-
+#if canImport(UIKit)
 extension UIImage.Orientation {
   var changingspectRatio: Bool {
     self == .left || self == .leftMirrored || self == .right || self == .rightMirrored
@@ -33,3 +32,4 @@ extension UIImage {
     }
   }
 }
+#endif

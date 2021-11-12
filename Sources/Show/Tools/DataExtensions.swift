@@ -4,9 +4,9 @@ import AVFoundation.AVCapturePhotoOutput
 extension Dictionary where Key == String, Value: Any {
   func decoded<T: Decodable>() -> T? {
     if let data = try? JSONSerialization.data(withJSONObject: self, options: []) {
-      if let jsonString = String(data: data, encoding: .utf8) {
-        print(jsonString)
-      }
+//      if let jsonString = String(data: data, encoding: .utf8) {
+//        print(jsonString)
+//      }
       do {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .formatted(.exifDateFormatter)
@@ -60,11 +60,14 @@ public extension Encodable {
 
 public extension AVCapturePhoto {
   var exifPropertyDictionary: [String: Any]? {
-    var dict = metadata["{Exif}"] as? [String: Any]
+    var dict: [String: Any]?
+    #if canImport(UIKit)
+    dict = metadata["{Exif}"] as? [String: Any]
     if let version = dict?["ExifVersion"] as? String {
       dict?.removeValue(forKey: "ExifVersion")
       dict?["ExifVersion"] = version.map { Int(String($0)) }
     }
+    #endif
     return dict
   }
   

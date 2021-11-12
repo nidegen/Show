@@ -1,6 +1,4 @@
 import Foundation
-import UIKit
-
 
 class MockServer: ImageServer {
   enum ServerError : Error {

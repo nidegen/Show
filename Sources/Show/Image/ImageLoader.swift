@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import UIKit
 
 class ImageLoader: ObservableObject {
   @Published var downloadedImage: UIImage?

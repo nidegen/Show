@@ -1,5 +1,4 @@
 import Foundation
-import UIKit
 
 public final class ImageStore {
   public var server: ImageServer
@@ -75,12 +74,5 @@ public final class ImageStore {
   public func deleteImage(withId id: Id) {
     server.deleteImage(withId: id)
     cache.deleteImage(withId: id)
-  }
-  
-  public func saveToLibrary(id: Id) {
-    image(forId: id) { optionalImage in
-      guard let image = optionalImage else { return }
-      UIImageWriteToSavedPhotosAlbum(image, self, nil, nil)
-    }
   }
 }

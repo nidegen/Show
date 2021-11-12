@@ -1,5 +1,4 @@
 import Foundation
-import UIKit
 
 protocol UploadObserver { // Not used yet, will be used for progress tracking
   func progressUpdate(progress: Float)

@@ -1,5 +1,4 @@
 import Photos
-import UIKit.UIImage
 
 public extension PHAsset {
   func requestImage(withSize size: CGSize = CGSize(width: 300, height: 300), contentMode: PHImageContentMode = .default) -> UIImage? {
