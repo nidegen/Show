@@ -79,8 +79,23 @@ public extension NSImage {
   }
   
   func jpegData(compressionQuality: CGFloat) -> Data? {
+    if let data = jpg(compressionFactor: compressionQuality) {
+      return data
+    }
     guard let rep = self.representations.first as? NSBitmapImageRep else { return nil }
     return rep.representation(using: .jpeg, properties: [NSBitmapImageRep.PropertyKey.compressionFactor : compressionQuality])
+  }
+  
+  func jpg(compressionFactor: Double = 1) -> Data? {
+    let imageData = tiffRepresentation
+    var imageRep: NSBitmapImageRep? = nil
+    if let imageData = imageData {
+        imageRep = NSBitmapImageRep(data: imageData)
+    }
+    let imageProps = [
+      NSBitmapImageRep.PropertyKey.compressionFactor : NSNumber(value: compressionFactor),
+    ]
+    return imageRep?.representation(using: .jpeg, properties: imageProps)
   }
 }
 #endif
