@@ -142,7 +142,9 @@ public struct ZoomImageView: UIViewRepresentable {
       if currentFormat != .original {
         self.currentFormat = .original
         imageStore.image(forId: id, format: .original) { original in
-          self.imageView.image = original
+          original.map {
+            self.imageView.image = original
+          }
         }
       }
     }
