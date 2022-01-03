@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+- Set cache from url
 - Do not set original image in zoom if nil
 
 ### 0.0.8

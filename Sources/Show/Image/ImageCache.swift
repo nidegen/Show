@@ -88,6 +88,18 @@ public class ImageCache {
     }
   }
   
+  public func setImage(_ image: URL, forId id: Id, format: ImageFormat = .original) {
+    cache.setObject(image, forKey: (id + format.rawValue) as NSString)
+    guard var url = self.fileManager.cachedImageUrl(forId: id, format: format) else { return }
+    url.appendPathExtension("jpg")
+    do {
+      try fileManager.createDirectory(atPath: url.deletingLastPathComponent().path, withIntermediateDirectories: true, attributes: nil)
+      try image.jpegData(compressionQuality: 1)?.write(to: url)
+    } catch {
+      print(error.localizedDescription)
+    }
+  }
+  
   public func setImage(_ imageData: Data, forId id: Id, format: ImageFormat = .original) {
     if let image = UIImage(data: imageData) {
       cache.setObject(image, forKey: (id + format.rawValue) as NSString)
