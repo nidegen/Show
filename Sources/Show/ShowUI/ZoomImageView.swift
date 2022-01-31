@@ -143,7 +143,7 @@ public struct ZoomImageView: UIViewRepresentable {
         self.currentFormat = .original
         imageStore.image(forId: id, format: .original) { original in
           original.map {
-            self.imageView.image = original
+            self.imageView.image = $0
           }
         }
       }
