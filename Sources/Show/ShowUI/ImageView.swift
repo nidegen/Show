@@ -42,6 +42,7 @@ public struct ImageView: View {
         imageLoader.load(id: $0, store: store, format: format)
       }
     }
+    .id(id)
   }
   
   public func placeholder<Content: View>(@ViewBuilder _ content: () -> Content) -> ImageView {
