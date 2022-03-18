@@ -22,13 +22,12 @@ public final class ImageStore {
       if image == nil && format != .original {
         self.server.image(forId: id, format: .original) { image in
           if let image = image {
-            if var resized = image.resize(clampingMin: format.maxSmallerResolution) {
-              if format == .thumbnailSquared {
-                resized = resized.squared() ?? resized
-              }
-              self.cache.setImage(resized, forId: id, format: format)
-              completion(resized)
+            var resized: UIImage = image.resize(clampingMin: format.maxSmallerResolution) ?? image
+            if format == .thumbnailSquared {
+              resized = resized.squared() ?? resized
             }
+            self.cache.setImage(resized, forId: id, format: format)
+            completion(resized)
           }
         }
       } else {
