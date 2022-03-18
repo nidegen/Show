@@ -1,34 +1,45 @@
 import SwiftUI
 
 public struct ImageView: View {
-  @ObservedObject private var imageLoader: ImageLoader
+  @StateObject private var imageLoader = ImageLoader()
   
-  public var placeholder: AnyView?
+  var placeholder: AnyView?
+  
+  var id: Id?
+  var format: ImageFormat
+  var store: ImageStore
 
-  public init(id: Id?, format: ImageFormat = .preview, store: ImageStore) {
-    imageLoader = ImageLoader(store: store, format: format)
-    id.map {
-      imageLoader.load(id: $0)
-    }
+  public init(id: Id?, format: ImageFormat = .preview, store: ImageStore, placeholder: AnyView? = nil) {
+    self.id = id
+    self.format = format
+    self.store = store
+    self.placeholder = placeholder
   }
   
   @ViewBuilder
   public var body: some View {
-    if let image = imageLoader.downloadedImage {
-      #if os(iOS)
-      SwiftUI.Image(uiImage: image.withRenderingMode(.alwaysOriginal))
-        .resizable()
-        .aspectRatio(contentMode: .fill)
-      #else
-      SwiftUI.Image(uiImage: image)
-        .resizable()
-        .aspectRatio(contentMode: .fill)
-      #endif
-    } else {
-      if let placeholder = placeholder {
-        placeholder
+    Group {
+      if let image = imageLoader.downloadedImage {
+        #if os(iOS)
+        SwiftUI.Image(uiImage: image.withRenderingMode(.alwaysOriginal))
+          .resizable()
+          .aspectRatio(contentMode: .fill)
+        #else
+        SwiftUI.Image(uiImage: image)
+          .resizable()
+          .aspectRatio(contentMode: .fill)
+        #endif
       } else {
-        defaultPlaceholder
+        if let placeholder = placeholder {
+          placeholder
+        } else {
+          defaultPlaceholder
+        }
+      }
+    }
+    .onAppear {
+      id.map {
+        imageLoader.load(id: $0, store: store, format: format)
       }
     }
   }
