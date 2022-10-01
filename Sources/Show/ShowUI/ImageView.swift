@@ -9,7 +9,12 @@ public struct ImageView: View {
   var format: ImageFormat
   var store: ImageStore
 
-  public init(id: Id?, format: ImageFormat = .preview, store: ImageStore, placeholder: AnyView? = nil) {
+  public init(
+    id: Id?,
+    format: ImageFormat = .preview,
+    store: ImageStore,
+    placeholder: AnyView? = nil
+  ) {
     self.id = id
     self.format = format
     self.store = store
@@ -60,7 +65,9 @@ public struct ImageView: View {
         .aspectRatio(contentMode: .fit)
         .padding()
         .foregroundColor(.white)
-      ProgressView()
+      if id != nil {
+        ProgressView()
+      }
     }
   }
 }
