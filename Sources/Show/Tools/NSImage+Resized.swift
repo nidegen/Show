@@ -1,6 +1,15 @@
 #if canImport(AppKit)
 import AppKit.NSImage
 
+extension NSImage {
+  var sizeReal: NSSize {
+    guard representations.count > 0 else { return NSSize(width: 0, height: 0) }
+    
+    let rep = self.representations[0]
+    return NSSize(width: rep.pixelsWide, height: rep.pixelsHigh)
+  }
+}
+
 public extension NSImage {
   var maxSize: CGFloat {
     max(size.width, size.height)
@@ -12,12 +21,12 @@ public extension NSImage {
 
 
   func resized(toMax maxResolution: CGFloat) -> NSImage? {
-    if self.size.width > self.size.height {
-      if self.size.width > maxResolution {
+    if self.sizeReal.width > self.sizeReal.height {
+      if self.sizeReal.width > maxResolution {
         return self.resized(toWidth: maxResolution)
       }
     } else {
-      if self.size.height > maxResolution {
+      if self.sizeReal.height > maxResolution {
         return self.resized(toHeight: maxResolution)
       }
     }
@@ -25,12 +34,12 @@ public extension NSImage {
   }
 
   func resize(clampingMin maxResolution: CGFloat) -> NSImage? {
-    if self.size.height > self.size.width {
-      if self.size.width > maxResolution {
+    if self.sizeReal.height > self.sizeReal.width {
+      if self.sizeReal.width > maxResolution {
         return self.resized(toWidth: maxResolution)
       }
     } else {
-      if self.size.height > maxResolution {
+      if self.sizeReal.height > maxResolution {
         return self.resized(toHeight: maxResolution)
       }
     }
@@ -38,12 +47,12 @@ public extension NSImage {
   }
 
   func resized(clampingMax maxResolution: CGFloat) -> NSImage? {
-    if self.size.width > self.size.height {
-      if self.size.width > maxResolution {
+    if self.sizeReal.width > self.sizeReal.height {
+      if self.sizeReal.width > maxResolution {
         return self.resized(toWidth: maxResolution)
       }
     } else {
-      if self.size.height > maxResolution {
+      if self.sizeReal.height > maxResolution {
         return self.resized(toHeight: maxResolution)
       }
     }

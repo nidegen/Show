@@ -11,7 +11,7 @@ extension NSImage {
   var newY: CGFloat { isPortrait ? ((size.height - size.width) / 2).rounded(.down) : 0 }
 
   public func squared() -> NSImage? {
-    let originalSize = self.size
+    let originalSize = self.sizeReal
     var sideSize : CGFloat = 0
     if(originalSize.width > originalSize.height) {
       sideSize = originalSize.height
