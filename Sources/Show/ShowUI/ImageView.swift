@@ -64,7 +64,7 @@ public struct ImageView: View {
         .resizable()
         .aspectRatio(contentMode: .fit)
         .padding()
-        .foregroundColor(.white)
+        .foregroundColor(.white.opacity(0.5))
       if id != nil {
         ProgressView()
       }
@@ -75,5 +75,7 @@ public struct ImageView: View {
 struct ImageView_Previews: PreviewProvider {
   static var previews: some View {
     ImageView(id: "nbl", store: ImageStore(server: MockServer()))
+      .ignoresSafeArea()
+//      .colorScheme(.dark)
   }
 }
