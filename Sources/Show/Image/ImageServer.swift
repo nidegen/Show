@@ -21,4 +21,6 @@ public protocol ImageServer {
                       completion: Completion?) -> Id
   
   func deleteImage(withId id: Id)
+
+  func videoURL(forId id: Id) async throws -> URL
 }

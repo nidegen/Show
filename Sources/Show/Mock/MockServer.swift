@@ -1,6 +1,10 @@
 import Foundation
 
 class MockServer: ImageServer {
+  func videoURL(forId id: Id) async throws -> URL {
+    URL(string: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")!
+  }
+
   enum ServerError : Error {
     case couldNotLoadImage
   }
