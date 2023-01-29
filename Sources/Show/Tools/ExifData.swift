@@ -49,7 +49,7 @@ public struct ExifData: Codable {
   public var UserComment: String?
   public var Sharpness: Int?
   public var Saturation: Int?
-  public var MaxApertureValue: Int?
+  public var MaxApertureValue: Double?
   public var ImageUniqueID: String?
   
   public init() {}
