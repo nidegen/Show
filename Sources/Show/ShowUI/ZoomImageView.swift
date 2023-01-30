@@ -76,8 +76,8 @@ public struct ZoomImageView: UIViewRepresentable {
       didSet {
         self.imageView.image = nil
         
-        imageStore.image(forId: id, format: currentFormat) { image in
-          self.imageView.image = image
+        Task {
+          self.imageView.image = try? await imageStore.image(forId: id, format: currentFormat)
         }
       }
     }
@@ -97,9 +97,9 @@ public struct ZoomImageView: UIViewRepresentable {
       self.id = id
       super.init()
       self.imageView.contentMode = .scaleAspectFit
-      
-      imageStore.image(forId: id) { image in
-        self.imageView.image = image
+
+      Task {
+        self.imageView.image = try await imageStore.image(forId: id)
       }
     }
     
@@ -141,10 +141,8 @@ public struct ZoomImageView: UIViewRepresentable {
     func loadOriginalImage() {
       if currentFormat != .original {
         self.currentFormat = .original
-        imageStore.image(forId: id, format: .original) { original in
-          original.map {
-            self.imageView.image = $0
-          }
+        Task {
+          self.imageView.image = try await imageStore.image(forId: id, format: .original)
         }
       }
     }

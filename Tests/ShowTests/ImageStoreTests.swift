@@ -10,12 +10,12 @@ final class ImageStoreTests: XCTestCase {
     store.uploadNewImage(randomImage, id: "testImage")
   }
   
-  func testStore() {
+  func testStore() async {
     var expectations: [XCTestExpectation] = []
     for format in ImageFormat.allCases {
-      expectations += [testImageFormat(format: format)]
+      expectations += [await testImageFormat(format: format)]
     }
-    wait(for: expectations, timeout: 2.0)
+    await fulfillment(of: expectations, timeout: 2.0)
     for format in ImageFormat.allCases {
       testFormatCached(format: format)
     }
@@ -26,14 +26,14 @@ final class ImageStoreTests: XCTestCase {
     XCTAssertLessThanOrEqual(img.minSize, format.maxSmallerResolution)
   }
   
-  func testImageFormat(format: ImageFormat) -> XCTestExpectation {
+  func testImageFormat(format: ImageFormat) async -> XCTestExpectation {
     let expectation = XCTestExpectation(description: "Test image getter for \(format.rawValue)")
-    store.image(forId: "test", format: format) { image in
-      if let image = image {
-        XCTAssertLessThanOrEqual(image.minSize, format.maxSmallerResolution)
-      }
-      expectation.fulfill()
+    if let image = try? await store.image(forId: "test", format: format) {
+      XCTAssertLessThanOrEqual(image.minSize, format.maxSmallerResolution)
+    } else {
+      XCTFail("no image")
     }
+    expectation.fulfill()
     return expectation
   }
 }

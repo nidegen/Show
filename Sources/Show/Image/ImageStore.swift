@@ -11,45 +11,31 @@ public final class ImageStore {
   
   public static var mock = ImageStore(server: MockServer())
   
-  public func image(forId id: Id, format: ImageFormat = .preview, completion: @escaping (UIImage?)->()) {
-    
+  public func image(forId id: Id, format: ImageFormat = .preview) async throws -> UIImage {
     if let cachedImage = cache.getImage(forId: id, format: format) {
-      completion(cachedImage)
-      return
+      return cachedImage
     }
     
-    server.image(forId: id, format: format) { image in
-      if image == nil && format != .original {
-        self.server.image(forId: id, format: .original) { image in
-          if let image = image {
-            var resized: UIImage = image.resize(clampingMin: format.maxSmallerResolution) ?? image
-            if format == .thumbnailSquared {
-              resized = resized.squared() ?? resized
-            }
-            self.cache.setImage(resized, forId: id, format: format)
-            completion(resized)
-          }
+    if let image = try? await server.image(forId: id, format: format) {
+      self.cache.setImage(image, forId: id, format: format)
+      return image
+    } else if format != .original {
+      if let image = try? await self.server.image(forId: id, format: .original) {
+        var resized: UIImage = image.resize(clampingMin: format.maxSmallerResolution) ?? image
+        if format == .thumbnailSquared {
+          resized = resized.squared() ?? resized
         }
-      } else {
-        image.map {
-          self.cache.setImage($0, forId: id, format: format)
-        }
-        completion(image)
+        self.cache.setImage(resized, forId: id, format: format)
+        return resized
       }
     }
+    throw NSError()
   }
-  
-  public func getImages(ids: [Id], ofSize format: ImageFormat = .original, completion: (([UIImage]) -> ())? = nil) {
-    let group = DispatchGroup()
-    var images = [UIImage]()
-    for id in ids {
-      group.enter()
-      self.image(forId: id, format: format) { image in
-        image.map { images.append($0) }
-        group.leave()
-      }
+
+  public func getImages(ids: [Id], ofSize format: ImageFormat = .original) async throws -> [UIImage] {
+    try await ids.asyncCompactMap { id in
+      try await self.image(forId: id, format: format)
     }
-    completion?(images)
   }
   
   @discardableResult
@@ -58,6 +44,11 @@ public final class ImageStore {
     server.uploadNewImage(photo, id: id, maxResolution: maxResolution, compression: compression, completion: completion)
     self.cache.setImage(photo, forId: id)
     return id
+  }
+
+  public func deleteImage(withId id: Id) async throws {
+    try await server.deleteImage(withId: id)
+    cache.deleteImage(withId: id)
   }
   
   
@@ -69,9 +60,32 @@ public final class ImageStore {
     }
     return id
   }
+}
+
+extension Sequence {
+  func asyncCompactMap<T>(
+    _ transform: (Element) async throws -> T?
+  ) async rethrows -> [T] {
+    var values = [T]()
+
+    for element in self {
+      if let transformed = try await transform(element) {
+        values.append(transformed)
+      }
+    }
+
+    return values
+  }
   
-  public func deleteImage(withId id: Id) {
-    server.deleteImage(withId: id)
-    cache.deleteImage(withId: id)
+  func asyncMap<T>(
+    _ transform: (Element) async throws -> T
+  ) async rethrows -> [T] {
+    var values = [T]()
+
+    for element in self {
+      try await values.append(transform(element))
+    }
+
+    return values
   }
 }

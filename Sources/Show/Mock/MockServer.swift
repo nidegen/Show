@@ -21,20 +21,20 @@ class MockServer: ImageServer {
     return id
   }
   
-  func image(forId id: Id, format: ImageFormat, completion: @escaping (UIImage?) -> ()) {
+  func image(forId id: Id, format: ImageFormat) async throws -> UIImage {
     if let image = store[id] {
-      completion(image)
+      return image
     } else {
 //      let new = try? UIImage(data: Data(contentsOf: URL(string: "https://source.unsplash.com/random/\(id)")!))
 //      let new = UIImage(contentsOfFile: Bundle.main.url(forResource: "ErhKqMSXMAEIv1t", withExtension: "jpeg")!.path)
       let new = UIImage(systemName: id)
       if let image = new {
         store[id] = image
-        completion(image)
-      } else {
-        completion(nil)
+        return image
       }
     }
+    
+    throw NSError()
   }
   
   func deleteImage(withId id: Id) {
