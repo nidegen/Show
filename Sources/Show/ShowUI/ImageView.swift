@@ -42,9 +42,9 @@ public struct ImageView: View {
         }
       }
     }
-    .onAppear {
-      id.map {
-        imageLoader.load(id: $0, store: store, format: format)
+    .task {
+      if let id {
+        await imageLoader.load(id: id, store: store, format: format)
       }
     }
     .id(id)

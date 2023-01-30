@@ -7,7 +7,7 @@ protocol UploadObserver { // Not used yet, will be used for progress tracking
 public typealias Completion = (Result<Id,Error>) -> ()
 
 public protocol ImageServer {
-  func image(forId id: Id, format: ImageFormat, completion: @escaping (UIImage?)->())
+  func image(forId id: Id, format: ImageFormat) async throws -> UIImage
   
   @discardableResult
   func uploadNewImage(_ photo: UIImage, id: Id,
@@ -20,7 +20,7 @@ public protocol ImageServer {
                       id: Id,
                       completion: Completion?) -> Id
   
-  func deleteImage(withId id: Id)
+  func deleteImage(withId id: Id) async throws
 
   func videoURL(forId id: Id) async throws -> URL
 }
